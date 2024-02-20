@@ -69,7 +69,7 @@ public class Graph {
                 
                 for (Rectangle rectangle : rectangles) {
                     g.setColor(Color.GREEN);
-                    g.fillRect((int) rectangle.getX(), (int) rectangle.getY(), (int) rectangle.getWidth(), (int) rectangle.getHeight());
+                    g.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
                 }
             }
         };
