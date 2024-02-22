@@ -16,9 +16,11 @@ public class Graph {
     private boolean btnCreatingRectangle = false;
     private boolean btnUnion = false;
     private boolean btnInter = false;
+    private boolean btnResize = false;
     
     private int startX = -1, startY = -1, endX = -1, endY = -1;
     private Shap selectedShape1, selectedShape2 = null;
+
     
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -75,6 +77,20 @@ public class Graph {
         toolBar.add(creatRectBtn);
 // ---------------------------- btn create rectangle ----------------------------
 
+// ---------------------------- btn resize ----------------------------
+JButton resizeBtn = new JButton("Resize");
+resizeBtn.addActionListener(new ActionListener() {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        resetBool();
+        btnResize = true;
+        rectPanel.removeMouseListener(mouseListener);
+        rectPanel.addMouseListener(mouseListener);
+    }
+});
+toolBar.add(resizeBtn);
+// ---------------------------- btn resize ----------------------------
+
 // --------------------------------- btn Union ---------------------------------
         JButton unionBtn = new JButton("Union");
         unionBtn.addActionListener(new ActionListener() {
@@ -102,6 +118,8 @@ public class Graph {
         });
         toolBar.add(interBtn);
 // --------------------------------- btn Inter ---------------------------------
+
+
 
         // Panel for printing rectangles
         rectPanel = new JPanel() {
@@ -169,7 +187,8 @@ public class Graph {
                 if (SwingUtilities.isLeftMouseButton(e)) {
                 	// 1) select shap 1
                 	if (selectedShape1 == null) {
-                        for (Shap shape : shaps) {
+                        for (int i = shaps.size() - 1; i >= 0; i--) {
+                            Shap shape = shaps.get(i);
                             if (shape.isTouch(e.getX(), e.getY())) {
                                 selectedShape1 = shape;
                                 System.err.println("Selected id= " + shape.getId());
@@ -180,7 +199,8 @@ public class Graph {
                 	
                 	// 2) select shap 2
                     else {
-                        for (Shap shape : shaps) {
+                        for (int i = shaps.size() - 1; i >= 0; i--) {
+                            Shap shape = shaps.get(i);
                             if (shape.isTouch(e.getX(), e.getY()) && !shape.equals(selectedShape1)) {
                                 selectedShape2 = shape;
                                 System.err.println("Selected id= " + shape.getId());
@@ -212,7 +232,8 @@ public class Graph {
             		
             		// 1) select shap 1
                 	if (selectedShape1 == null) {
-                        for (Shap shape : shaps) {
+                        for (int i = shaps.size() - 1; i >= 0; i--) {
+                            Shap shape = shaps.get(i);
                             if (shape.isTouch(e.getX(), e.getY())) {
                                 selectedShape1 = shape;
                                 System.err.println("Selected id= " + shape.getId());
@@ -223,7 +244,8 @@ public class Graph {
                 	
                 	// 2) select shap 2
                     else {
-                        for (Shap shape : shaps) {
+                        for (int i = shaps.size() - 1; i >= 0; i--) {
+                            Shap shape = shaps.get(i);
                             if (shape.isTouch(e.getX(), e.getY()) && !shape.equals(selectedShape1)) {
                                 selectedShape2 = shape;
                                 System.err.println("Selected id= " + shape.getId());
@@ -249,6 +271,36 @@ public class Graph {
                 }
             }
 // --------------------------------- function Inter ----------------------------------
+// --------------------------------- function Resize ----------------------------------
+            else if (btnResize) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    System.err.println("Resize");
+                    for (int i = shaps.size() - 1; i >= 0; i--) {
+                        Shap shape = shaps.get(i);
+                        if (shape.isTouch(e.getX(), e.getY())) {
+                            selectedShape1 = shape;
+                            System.err.println("Selected id= " + shape.getId());
+                            for (Rectangle rect : shape.getRectangles()) {
+                                System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + rect.getX()+rect.getWidth() + " Y2 = " + rect.getY()+rect.getHeight() );
+                            break;
+                            }
+                            
+                        }
+                    }
+                        
+                        
+                        
+                        
+                
+                    
+
+
+
+                    
+                
+                }
+            }
+// --------------------------------- function Resize ----------------------------------
         }
     };
 }
