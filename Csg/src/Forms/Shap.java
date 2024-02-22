@@ -23,7 +23,8 @@ public class Shap {
     }
 	
 	public boolean isTouch(int x, int y) {
-	    for (Rectangle rectangle : rectangles) {
+		for (int i = rectangles.size() - 1; i >= 0; i--) {
+			Rectangle rectangle = rectangles.get(i);
 	        if (rectangle.contains(x, y)) return true;
 	    }
 	    return false;

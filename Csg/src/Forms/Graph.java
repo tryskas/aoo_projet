@@ -16,6 +16,7 @@ public class Graph {
     private boolean btnCreatingRectangle = false;
     private boolean btnUnion = false;
     private boolean btnInter = false;
+    private boolean btnMove = false;
     
     private int startX = -1, startY = -1, endX = -1, endY = -1;
     private Shap selectedShape1, selectedShape2 = null;
@@ -41,6 +42,7 @@ public class Graph {
     	this.btnCreatingRectangle = false;
     	this.btnInter = false;
     	this.btnUnion = false;
+    	this.btnMove = false;
     	this.startX = -1;
     	this.startY = -1;
     	this.endX = -1;
@@ -98,6 +100,23 @@ public class Graph {
         });
         toolBar.add(interBtn);
 // --------------------------------- btn Inter ---------------------------------
+        
+// --------------------------------- btn Move ---------------------------------
+        JButton moveBtn = new JButton("Move form");
+        moveBtn.addActionListener(new ActionListener() {
+        	@Override
+            public void actionPerformed(ActionEvent e) {
+        		resetBool();
+                btnMove = true;
+                rectPanel.removeMouseListener(mouseListener);
+                rectPanel.addMouseListener(mouseListener);
+            }
+        });
+        toolBar.add(unionBtn);   
+        
+        JButton btnMove_1 = new JButton("Move");
+        toolBar.add(btnMove_1);
+// --------------------------------- btn Move ---------------------------------
 
         // Panel for printing rectangles
         rectPanel = new JPanel() {
@@ -179,7 +198,8 @@ public class Graph {
                 if (SwingUtilities.isLeftMouseButton(e)) {
                 	// 1) select shap 1
                 	if (selectedShape1 == null) {
-                        for (Shap shape : shaps) {
+                		for (int i = shaps.size() - 1; i >= 0; i--) {
+                            Shap shape = shaps.get(i);
                             if (shape.isTouch(e.getX(), e.getY())) {
                                 selectedShape1 = shape;
                                 System.err.println("Selected id= " + shape.getId());
@@ -190,7 +210,8 @@ public class Graph {
                 	
                 	// 2) select shap 2
                     else {
-                        for (Shap shape : shaps) {
+                    	for (int i = shaps.size() - 1; i >= 0; i--) {
+                            Shap shape = shaps.get(i);
                             if (shape.isTouch(e.getX(), e.getY()) && !shape.equals(selectedShape1)) {
                                 selectedShape2 = shape;
                                 System.err.println("Selected id= " + shape.getId());
@@ -222,7 +243,8 @@ public class Graph {
             		
             		// 1) select shap 1
                 	if (selectedShape1 == null) {
-                        for (Shap shape : shaps) {
+                		for (int i = shaps.size() - 1; i >= 0; i--) {
+                            Shap shape = shaps.get(i);
                             if (shape.isTouch(e.getX(), e.getY())) {
                                 selectedShape1 = shape;
                                 System.err.println("Selected id= " + shape.getId());
@@ -233,8 +255,9 @@ public class Graph {
                 	
                 	// 2) select shap 2
                     else {
-                        for (Shap shape : shaps) {
-                            if (shape.isTouch(e.getX(), e.getY()) && !shape.equals(selectedShape1)) {
+                    	for (int i = shaps.size() - 1; i >= 0; i--) {
+                            Shap shape = shaps.get(i);
+                            if (shape.isTouch(e.getX(), e.getY()) && shape.equals(selectedShape1) != true) {
                                 selectedShape2 = shape;
                                 System.err.println("Selected id= " + shape.getId());
                                 break;
