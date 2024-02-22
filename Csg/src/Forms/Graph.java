@@ -49,10 +49,6 @@ public class Graph {
     	this.selectedShape2=null;
     }
     
-    public void selectShaps() {
-    	
-    }
-    
     private void initialize() {
         frame = new JFrame();
         frame.setBounds(100, 100, 450, 300);  //size of the window
@@ -131,7 +127,21 @@ public class Graph {
 
         return unionResult;
     }
-
+    
+    private Shap inter(Shap shape1, Shap shape2) {
+        Shap interResult = new Shap();
+        
+        for (Rectangle rect1 : shape1.getRectangles()) {
+            for (Rectangle rect2 : shape2.getRectangles()) {
+                Rectangle intersection = rect1.intersection(rect2);
+                if (intersection.getWidth() > 0 && intersection.getHeight() > 0) {
+                    interResult.addRectangle(intersection);
+                }
+            }
+        }
+        
+        return interResult;
+    }
     
     private MouseListener mouseListener = new MouseAdapter() {
         @Override
@@ -235,7 +245,7 @@ public class Graph {
                    // 3) do an inter
                    if (selectedShape1 != null && selectedShape2 != null) {
                         	
-                	   Shap InterResult = union(selectedShape1, selectedShape2);
+                	   Shap InterResult = inter(selectedShape1, selectedShape2);
                 	   
                 	   shaps.remove(selectedShape1);
                        shaps.remove(selectedShape2);

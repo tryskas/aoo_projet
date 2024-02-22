@@ -33,8 +33,6 @@ public class Shap {
 		return this.id;
 	}
 	
-
-	
 	public void draw(Graphics g) {
         for (Rectangle rectangle : rectangles) {
             g.setColor(Color.GREEN);
