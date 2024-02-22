@@ -9,11 +9,16 @@ import java.util.List;
 public class Graph {
 
     private JFrame frame;
-    private boolean creatingRectangle = false;
-    private int startX = -1, startY = -1, endX = -1, endY = -1;
     private JPanel rectPanel;
-    private List<Rectangle> rectangles = new ArrayList<>();
     
+    private List<Shap> shaps = new ArrayList<>();
+    
+    private boolean btnCreatingRectangle = false;
+    private boolean btnUnion = false;
+    private boolean btnInter = false;
+    
+    private int startX = -1, startY = -1, endX = -1, endY = -1;
+    private Shap selectedShape1, selectedShape2 = null;
     
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
@@ -32,9 +37,25 @@ public class Graph {
         initialize();
     }
 
+    public void resetBool() {
+    	this.btnCreatingRectangle = false;
+    	this.btnInter = false;
+    	this.btnUnion = false;
+    	this.startX = -1;
+    	this.startY = -1;
+    	this.endX = -1;
+    	this.endY = -1;
+    	this.selectedShape1=null;
+    	this.selectedShape2=null;
+    }
+    
+    public void selectShaps() {
+    	
+    }
+    
     private void initialize() {
         frame = new JFrame();
-        frame.setBounds(100, 100, 450, 300);
+        frame.setBounds(100, 100, 450, 300);  //size of the window
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JToolBar toolBar = new JToolBar();
@@ -45,43 +66,80 @@ public class Graph {
         creatRectBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                creatingRectangle = true;
+            	resetBool();
+                btnCreatingRectangle = true;
+                rectPanel.removeMouseListener(mouseListener);
                 rectPanel.addMouseListener(mouseListener);
             }
         });
         toolBar.add(creatRectBtn);
 // ---------------------------- btn create rectangle ----------------------------
 
-//// ---------------------------- TO DO ----------------------------
-
+// --------------------------------- btn Union ---------------------------------
         JButton unionBtn = new JButton("Union");
-        toolBar.add(unionBtn);
+        unionBtn.addActionListener(new ActionListener() {
+        	@Override
+            public void actionPerformed(ActionEvent e) {
+        		resetBool();
+                btnUnion = true;
+                rectPanel.removeMouseListener(mouseListener);
+                rectPanel.addMouseListener(mouseListener);
+            }
+        });
+        toolBar.add(unionBtn);   
+// --------------------------------- btn Union ---------------------------------
 
+// --------------------------------- btn Inter ---------------------------------
         JButton interBtn = new JButton("Inter");
+        interBtn.addActionListener(new ActionListener() {
+        	@Override
+            public void actionPerformed(ActionEvent e) {
+        		resetBool();
+                btnInter = true;
+                rectPanel.removeMouseListener(mouseListener);
+                rectPanel.addMouseListener(mouseListener);
+            }
+        });
         toolBar.add(interBtn);
-// ---------------------------- TO DO ----------------------------
+// --------------------------------- btn Inter ---------------------------------
 
-        // Panel pour afficher les rectangles
+        // Panel for printing rectangles
         rectPanel = new JPanel() {
             @Override
             public void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                
-                for (Rectangle rectangle : rectangles) {
-                    g.setColor(Color.GREEN);
-                    g.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
-                }
+        
+               for (Shap shap : shaps) {
+                   shap.draw(g);
+               }
             }
         };
-        frame.getContentPane().add(rectPanel, BorderLayout.CENTER);
+        frame.getContentPane().add(rectPanel, BorderLayout.CENTER);   
+    }
+    
+    private Shap union(Shap shape1, Shap shape2) {
+    	
+        Shap unionResult = new Shap();
         
-        
+    	for (Rectangle rect : shape1.getRectangles()) {
+            unionResult.addRectangle(rect);
+        }
+
+        for (Rectangle rect : shape2.getRectangles()) {
+            unionResult.addRectangle(rect);
+        }
+
+        return unionResult;
     }
 
+    
     private MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (creatingRectangle) {
+        	
+// ---------------------------- function create rectangle ----------------------------
+
+            if (btnCreatingRectangle) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     if (startX == -1 && startY == -1) {
                         startX = e.getX();
@@ -89,19 +147,108 @@ public class Graph {
                     } else {
                         endX = e.getX();
                         endY = e.getY();
-                        creatingRectangle = false;
+                        btnCreatingRectangle = false;
                         
                         //ajoute un rectangle a la liste.
-                        rectangles.add(new Rectangle(Math.min(startX, endX), Math.min(startY, endY), Math.abs(endX - startX), Math.abs(endY - startY)));
+                        Shap shap = new Shap();
+                        shap.addRectangle(new Rectangle(Math.min(startX, endX), Math.min(startY, endY), Math.abs(endX - startX), Math.abs(endY - startY)));
+                        shaps.add(shap);
+                        
                         rectPanel.removeMouseListener(this);
                         
-                        rectPanel.repaint(); // Rafraîchit l'affichage du panneau pour afficher le nouveau rectangle
-                        System.out.println("Rectangle créé avec les coordonnées : (" + startX + ", " + startY + ") et (" + endX + ", " + endY + ")");
+                        rectPanel.repaint();
+                        System.err.println("Rectangle créé avec les coordonnées : (" + startX + ", " + startY + ") et (" + endX + ", " + endY + ")");
                         startX=-1; startY=-1;
                     }
                 }
+            }       
+// ---------------------------- function create rectangle ----------------------------
+            
+// --------------------------------- function Union ----------------------------------
+            else if (btnUnion) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                	// 1) select shap 1
+                	if (selectedShape1 == null) {
+                        for (Shap shape : shaps) {
+                            if (shape.isTouch(e.getX(), e.getY())) {
+                                selectedShape1 = shape;
+                                System.err.println("Selected id= " + shape.getId());
+                                break;
+                            }
+                        }
+                    } 
+                	
+                	// 2) select shap 2
+                    else {
+                        for (Shap shape : shaps) {
+                            if (shape.isTouch(e.getX(), e.getY()) && !shape.equals(selectedShape1)) {
+                                selectedShape2 = shape;
+                                System.err.println("Selected id= " + shape.getId());
+                                break;
+                            }
+                        }
+                    }
+                   // 3) do an inter
+                   if (selectedShape1 != null && selectedShape2 != null) {
+                        	
+                	   Shap unionResult = union(selectedShape1, selectedShape2);
+                	   
+                	   shaps.remove(selectedShape1);
+                       shaps.remove(selectedShape2);
+                       shaps.add(unionResult);
+                       
+                       System.err.println("New shap id= " + unionResult.getId());
+                       selectedShape1 = null;
+                       selectedShape2 = null;
+                       rectPanel.repaint();
+                   }
+                }
             }
+// --------------------------------- function Union ----------------------------------
+            
+// --------------------------------- function Inter ----------------------------------
+            else if (btnInter) {
+            	if (SwingUtilities.isLeftMouseButton(e)) {
+            		
+            		// 1) select shap 1
+                	if (selectedShape1 == null) {
+                        for (Shap shape : shaps) {
+                            if (shape.isTouch(e.getX(), e.getY())) {
+                                selectedShape1 = shape;
+                                System.err.println("Selected id= " + shape.getId());
+                                break;
+                            }
+                        }
+                    } 
+                	
+                	// 2) select shap 2
+                    else {
+                        for (Shap shape : shaps) {
+                            if (shape.isTouch(e.getX(), e.getY()) && !shape.equals(selectedShape1)) {
+                                selectedShape2 = shape;
+                                System.err.println("Selected id= " + shape.getId());
+                                break;
+                            }
+                        }
+                    }
+                	
+                   // 3) do an inter
+                   if (selectedShape1 != null && selectedShape2 != null) {
+                        	
+                	   Shap InterResult = union(selectedShape1, selectedShape2);
+                	   
+                	   shaps.remove(selectedShape1);
+                       shaps.remove(selectedShape2);
+                       shaps.add(InterResult);
+                       
+                       System.err.println("New shap id= " + InterResult.getId());
+                       selectedShape1 = null;
+                       selectedShape2 = null;
+                       rectPanel.repaint();
+                   }
+                }
+            }
+// --------------------------------- function Inter ----------------------------------
         }
     };
-    
 }
