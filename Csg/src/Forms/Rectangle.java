@@ -31,8 +31,6 @@ public class Rectangle {
     }
     
     public boolean contains(int x, int y) {
-        int w = this.width;
-        int h = this.height;
         
         //coordonnée du coin supérieur gauche
         int x0=this.x;
@@ -44,5 +42,17 @@ public class Rectangle {
         
         if (x>=x0 && x<=x1 && y>=y0 && y<=y1) return true;
         else return false;
+    }
+    
+    public Rectangle intersection(Rectangle r) {
+        int x1 = Math.max(this.x, r.x);
+        int y1 = Math.max(this.y, r.y);
+        int x2 = Math.min(this.x + this.width, r.x + r.width);
+        int y2 = Math.min(this.y + this.height, r.y + r.height);
+
+        int intersectionWidth = Math.max(0, x2 - x1);
+        int intersectionHeight = Math.max(0, y2 - y1);
+
+        return new Rectangle(x1, y1, intersectionWidth, intersectionHeight);
     }
 }
