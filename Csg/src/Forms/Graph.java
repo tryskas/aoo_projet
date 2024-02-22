@@ -281,7 +281,7 @@ toolBar.add(resizeBtn);
                             selectedShape1 = shape;
                             System.err.println("Selected id= " + shape.getId());
                             for (Rectangle rect : shape.getRectangles()) {
-                                System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + rect.getX()+rect.getWidth() + " Y2 = " + rect.getY()+rect.getHeight() );
+                                System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
                             break;
                             }
                             
