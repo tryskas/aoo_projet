@@ -292,25 +292,21 @@ toolBar.add(resizeBtn);
                             System.err.println("Selected id= " + shape.getId());
                             for (Rectangle rect : shape.getRectangles()) {
                                 System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
-                            break;
+                                rect.ChangeX(rect.getX()*2);
+                                rect.ChangeY(rect.getY()*2);
+                                rect.ChangHeight(rect.getHeight()*2);
+                                rect.ChangeWidth(rect.getWidth()*2);
+                                rectPanel.repaint();
                             }
-                            
+                            break;
                         }
+                        
                     }
-                        
-                        
-                        
-                        
-                
-                    
-
-
-
-                    
-                
+  
                 }
             }
 // --------------------------------- function Resize ----------------------------------
+
         }
     };
 }
