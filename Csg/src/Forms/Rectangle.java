@@ -13,6 +13,18 @@ public class Rectangle {
         this.width = width;
         this.height = height;
     }
+    public void ChangeX(int new_x) {
+        this.x = new_x;
+    }
+    public void ChangeY(int new_y) {
+        this.y = new_y;
+    }
+    public void ChangeWidth(int new_Width) {
+        this.width = new_Width;
+    }
+    public void ChangHeight(int new_Height) {
+        this.height = new_Height;
+    }
 
     public int getX() {
         return x;
