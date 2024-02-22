@@ -20,7 +20,8 @@ public class Graph {
     private boolean btnInfo = false;
     
     private int startX = -1, startY = -1, endX = -1, endY = -1;
-    private Shap selectedShape1, selectedShape2 = null;
+    private Shap selectedShape1, selectedShape2 = null,old=null;;
+
 
     
     public static void main(String[] args) {
@@ -295,6 +296,7 @@ toolBar.add(resizeBtn);
             }
 // --------------------------------- function Inter ----------------------------------
 // --------------------------------- function Resize ----------------------------------
+            
             else if (btnResize) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     System.err.println("Resize");
@@ -305,12 +307,9 @@ toolBar.add(resizeBtn);
                             System.err.println("Selected id= " + shape.getId());
                             for (Rectangle rect : shape.getRectangles()) {
                                 System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
-                                rect.ChangeX(rect.getX()*2);
-                                rect.ChangeY(rect.getY()*2);
-                                rect.ChangHeight(rect.getHeight()*2);
-                                rect.ChangeWidth(rect.getWidth()*2);
-                                rectPanel.repaint();
+                                
                             }
+                            rectPanel.repaint();
                             break;
                         }
                         
@@ -320,24 +319,44 @@ toolBar.add(resizeBtn);
             }
 // --------------------------------- function Resize ----------------------------------
 // --------------------------------- function info ----------------------------------
-else if (btnInfo) {
-    if (SwingUtilities.isLeftMouseButton(e)) {
-        System.err.println("Info :");
-        for (int i = shaps.size() - 1; i >= 0; i--) {
-            Shap shape = shaps.get(i);
-            if (shape.isTouch(e.getX(), e.getY())) {
-                selectedShape1 = shape;
-                System.err.println("Selected id= " + shape.getId());
-                for (Rectangle rect : shape.getRectangles()) {
-                    System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
-                }
-                break;
-            }
-            
-        }
+            else if (btnInfo) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    System.err.println("Info :");
+                    for (int i = shaps.size() - 1; i >= 0; i--) {
+                        Shap shape = shaps.get(i);
+                        if (shape.isTouch(e.getX(), e.getY())) {
+                            selectedShape1 = shape;
+                            System.err.println("Selected id= " + shape.getId());
 
-    }
-}
+                            
+                            Graphics g = rectPanel.getGraphics();
+                            shape.selectdraw(g);
+                            if(old!=null){
+                                System.err.println("OLD :");
+                                for (Rectangle rect : old.getRectangles()) {
+                                    System.err.println("OLD X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
+                                }
+                            }else{
+                                for (Rectangle rect : shape.getRectangles()) {
+                                    System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
+                                }
+                            
+                                System.err.println("1 OLD : "+old);
+                                Shap old=shape;
+                                System.err.println("2 OLD : "+old);
+                            }
+                            
+                
+                            
+                            
+                            break;
+                            
+                        }
+                        
+                    }
+
+                }
+            }
 // --------------------------------- function info ----------------------------------
         }
     };

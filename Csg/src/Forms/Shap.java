@@ -2,6 +2,8 @@ package Forms;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Shap {
@@ -39,4 +41,34 @@ public class Shap {
             g.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
         }
     }
+	public void selectdraw(Graphics g){
+		for (Rectangle rect : rectangles) {
+			System.err.println("select draw :");
+			//System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
+			List<Integer> listex = new LinkedList<Integer>(); 
+			List<Integer> listey = new LinkedList<Integer>(); 
+			listex.add(rect.getX());
+			listex.add((rect.getX()+rect.getWidth()));
+			listey.add(rect.getY());
+			listey.add((rect.getY()+rect.getHeight()));
+
+
+			System.out.println("Le maximum est: "+ Collections.max(listex)+" et "+ Collections.max(listey)); 
+			System.out.println("Le minimum est: "+ Collections.min(listex)+" et "+ Collections.min(listey)); 
+
+			int x1=Collections.min(listex);
+			int y1=Collections.min(listey);
+			int x2=Collections.max(listex);
+			int y2=Collections.max(listey);
+
+			g.drawLine(x1,y1,x2,y1);
+
+			g.drawLine(x2,y1,x2,y2);
+
+			g.drawLine(x2,y2,x1,y2);
+
+			g.drawLine(x1,y2,x1,y1);
+		}
+	}
+
 }
