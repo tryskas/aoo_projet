@@ -16,6 +16,7 @@ public class Graph {
     private boolean btnCreatingRectangle = false;
     private boolean btnUnion = false;
     private boolean btnInter = false;
+    private boolean btnMove = false;
     private boolean btnResize = false;
     private boolean btnInfo = false;
     
@@ -45,6 +46,7 @@ public class Graph {
     	this.btnCreatingRectangle = false;
     	this.btnInter = false;
     	this.btnUnion = false;
+    	this.btnMove = false;
     	this.startX = -1;
     	this.startY = -1;
     	this.endX = -1;
@@ -128,8 +130,23 @@ toolBar.add(resizeBtn);
         });
         toolBar.add(interBtn);
 // --------------------------------- btn Inter ---------------------------------
-
-
+        
+// --------------------------------- btn Move ---------------------------------
+        JButton moveBtn = new JButton("Move form");
+        moveBtn.addActionListener(new ActionListener() {
+        	@Override
+            public void actionPerformed(ActionEvent e) {
+        		resetBool();
+                btnMove = true;
+                rectPanel.removeMouseListener(mouseListener);
+                rectPanel.addMouseListener(mouseListener);
+            }
+        });
+        toolBar.add(unionBtn);   
+        
+        JButton btnMove_1 = new JButton("Move");
+        toolBar.add(btnMove_1);
+// --------------------------------- btn Move ---------------------------------
 
         // Panel for printing rectangles
         rectPanel = new JPanel() {
@@ -211,7 +228,7 @@ toolBar.add(resizeBtn);
                 if (SwingUtilities.isLeftMouseButton(e)) {
                 	// 1) select shap 1
                 	if (selectedShape1 == null) {
-                        for (int i = shaps.size() - 1; i >= 0; i--) {
+                		for (int i = shaps.size() - 1; i >= 0; i--) {
                             Shap shape = shaps.get(i);
                             if (shape.isTouch(e.getX(), e.getY())) {
                                 selectedShape1 = shape;
@@ -314,7 +331,6 @@ toolBar.add(resizeBtn);
                         }
                         
                     }
-  
                 }
             }
 // --------------------------------- function Resize ----------------------------------
