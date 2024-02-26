@@ -6,7 +6,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Shap {
+import java.io.Serializable;
+
+public class Shap implements Serializable {
 	private static int nextId = 1;
     private int id;
 	private List<Rectangle> rectangles;

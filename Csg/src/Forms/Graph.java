@@ -2,18 +2,26 @@ package Forms;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.io.ObjectOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+
 
 public class Graph {
 
     private JFrame frame;
     private JPanel rectPanel;
-    private MouseMotionListener mouseMotionListener;
-    
-    private List<Shap> shaps = new ArrayList<>();
-    
+      
     private boolean btnCreatingRectangle = false;
     
     private boolean btnUnion = false;
@@ -24,66 +32,34 @@ public class Graph {
     
     private int startX = -1, startY = -1, endX = -1, endY = -1;
     private Shap selectedShape1, selectedShape2 = null, old=null;
-
     
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    Graph window = new Graph();
-                    window.frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+    public List<Shap> shaps = new ArrayList<>();
+
 
     public Graph() {
-        initialize();
-    }
-
-    public void resetBool() {
-    	this.btnCreatingRectangle = false;
-    	this.btnInter = false;
-    	this.btnUnion = false;
-    	this.btnMove = false;
-    	this.startX = -1;
-    	this.startY = -1;
-    	this.endX = -1;
-    	this.endY = -1;
-    	this.selectedShape1=null;
-    	this.selectedShape2=null;
-    	this.old=null;
-    }
-    
-    private Shap union(Shap shape1, Shap shape2) {
     	
-        Shap unionResult = new Shap();
+    	int choice = JOptionPane.showConfirmDialog(null, "Do you want to load from the latest version of the project?", "Loading choice", JOptionPane.YES_NO_OPTION);
         
-    	for (Rectangle rect : shape1.getRectangles()) {
-            unionResult.addRectangle(rect);
-        }
-
-        for (Rectangle rect : shape2.getRectangles()) {
-            unionResult.addRectangle(rect);
-        }
-        return unionResult;
-    }
-    
-    private Shap inter(Shap shape1, Shap shape2) {
-        Shap interResult = new Shap();
-        
-        for (Rectangle rect1 : shape1.getRectangles()) {
-            for (Rectangle rect2 : shape2.getRectangles()) {
-                Rectangle intersection = rect1.intersection(rect2);
-                if (intersection.getWidth() > 0 && intersection.getHeight() > 0) {
-                    interResult.addRectangle(intersection);
-                }
+        // Si l'utilisateur choisit de charger à partir du fichier de sérialisation
+        if (choice == JOptionPane.YES_OPTION) {
+            // Désérialiser le fichier
+            try {
+                ObjectInputStream ois = new ObjectInputStream(new FileInputStream("shapes.ser"));
+                shaps = (List<Shap>) ois.readObject();
+                ois.close();
+            } catch (FileNotFoundException e) {
+                // Le fichier de sérialisation n'existe pas encore
+                e.printStackTrace();
+            } catch (IOException e) {
+                // Erreur de lecture du fichier
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                // La classe des objets sérialisés n'a pas été trouvée
+                e.printStackTrace();
             }
         }
-        
-        return interResult;
+
+        initialize();
     }
     
     private void initialize() {
@@ -178,6 +154,21 @@ public class Graph {
         });
         toolBar.add(moveBtn);
 // --------------------------------- btn Move ---------------------------------
+        
+// --------------------------------- btn Save ---------------------------------
+        JButton saveBtn = new JButton("Enregistrer");
+        saveBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    serializeShapes("shapes.ser");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        toolBar.add(saveBtn);
+// --------------------------------- btn Save ---------------------------------
 
 // --------------------- Panel for printing rectangles ------------------------
         rectPanel = new JPanel() {
@@ -204,6 +195,7 @@ public class Graph {
                     startX = e.getX();
                     startY = e.getY();
                     rectPanel.repaint();
+                    serializeShapes("shapes.ser");
                 }
             }
         });
@@ -234,6 +226,7 @@ public class Graph {
                         rectPanel.removeMouseListener(this);
                         
                         rectPanel.repaint();
+                        serializeShapes("shapes.ser");
                         System.err.println("Rectangle créé avec les coordonnées : (" + startX + ", " + startY + ") et (" + endX + ", " + endY + ")");
                         startX=-1; startY=-1;
                     }
@@ -267,6 +260,7 @@ public class Graph {
                             }
                         }
                     }
+                	
                    // 3) do an inter
                    if (selectedShape1 != null && selectedShape2 != null) {
                         	
@@ -280,6 +274,7 @@ public class Graph {
                        selectedShape1 = null;
                        selectedShape2 = null;
                        rectPanel.repaint();
+                       serializeShapes("shapes.ser");
                    }
                 }
             }
@@ -326,6 +321,7 @@ public class Graph {
                        selectedShape1 = null;
                        selectedShape2 = null;
                        rectPanel.repaint();
+                       serializeShapes("shapes.ser");
                    }
                 }
             }
@@ -365,6 +361,7 @@ public class Graph {
 	                             System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
 	                         }
 	                         rectPanel.repaint();
+	                         serializeShapes("shapes.ser");
 	                         break;
 	                     }
 	                 }
@@ -382,7 +379,7 @@ public class Graph {
 	                         selectedShape1 = shape;
 	                         System.err.println("Selected id= " + shape.getId());
 	
-	                 x	        Graphics g = rectPanel.getGraphics();
+	                         Graphics g = rectPanel.getGraphics();
 	                         shape.selectdraw(g);
 	                         if(old!=null){
 	                             System.err.println("OLD :");
@@ -407,5 +404,72 @@ public class Graph {
         }
     };
 // ================================= Click Mouse =====================================
+    
+    public void resetBool() {
+    	this.btnCreatingRectangle = false;
+    	this.btnInter = false;
+    	this.btnUnion = false;
+    	this.btnMove = false;
+    	this.startX = -1;
+    	this.startY = -1;
+    	this.endX = -1;
+    	this.endY = -1;
+    	this.selectedShape1=null;
+    	this.selectedShape2=null;
+    	this.old=null;
+    }
+    
+    public void serializeShapes(String filename) {
+    	System.err.println("start save");
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
+            oos.writeObject(shaps);
+            oos.close();
+            System.err.println("save done !!!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public Shap union(Shap shape1, Shap shape2) {
+    	
+        Shap unionResult = new Shap();
+        
+    	for (Rectangle rect : shape1.getRectangles()) {
+            unionResult.addRectangle(rect);
+        }
 
+        for (Rectangle rect : shape2.getRectangles()) {
+            unionResult.addRectangle(rect);
+        }
+        return unionResult;
+    }
+    
+    public Shap inter(Shap shape1, Shap shape2) {
+        Shap interResult = new Shap();
+        
+        for (Rectangle rect1 : shape1.getRectangles()) {
+            for (Rectangle rect2 : shape2.getRectangles()) {
+                Rectangle intersection = rect1.intersection(rect2);
+                if (intersection.getWidth() > 0 && intersection.getHeight() > 0) {
+                    interResult.addRectangle(intersection);
+                }
+            }
+        }
+        
+        return interResult;
+    }
+    
+    public static void main(String[] args) {
+        
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    Graph window = new Graph();
+                    window.frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }

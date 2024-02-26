@@ -1,6 +1,8 @@
 package Forms;
 
-public class Rectangle {
+import java.io.Serializable;
+
+public class Rectangle implements Serializable {
 
 	private int x;
 	private int y;
