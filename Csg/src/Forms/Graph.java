@@ -10,10 +10,12 @@ public class Graph {
 
     private JFrame frame;
     private JPanel rectPanel;
+    private MouseMotionListener mouseMotionListener;
     
     private List<Shap> shaps = new ArrayList<>();
     
     private boolean btnCreatingRectangle = false;
+    
     private boolean btnUnion = false;
     private boolean btnInter = false;
     private boolean btnMove = false;
@@ -21,8 +23,7 @@ public class Graph {
     private boolean btnInfo = false;
     
     private int startX = -1, startY = -1, endX = -1, endY = -1;
-    private Shap selectedShape1, selectedShape2 = null,old=null;;
-
+    private Shap selectedShape1, selectedShape2 = null, old=null;
 
     
     public static void main(String[] args) {
@@ -53,6 +54,36 @@ public class Graph {
     	this.endY = -1;
     	this.selectedShape1=null;
     	this.selectedShape2=null;
+    	this.old=null;
+    }
+    
+    private Shap union(Shap shape1, Shap shape2) {
+    	
+        Shap unionResult = new Shap();
+        
+    	for (Rectangle rect : shape1.getRectangles()) {
+            unionResult.addRectangle(rect);
+        }
+
+        for (Rectangle rect : shape2.getRectangles()) {
+            unionResult.addRectangle(rect);
+        }
+        return unionResult;
+    }
+    
+    private Shap inter(Shap shape1, Shap shape2) {
+        Shap interResult = new Shap();
+        
+        for (Rectangle rect1 : shape1.getRectangles()) {
+            for (Rectangle rect2 : shape2.getRectangles()) {
+                Rectangle intersection = rect1.intersection(rect2);
+                if (intersection.getWidth() > 0 && intersection.getHeight() > 0) {
+                    interResult.addRectangle(intersection);
+                }
+            }
+        }
+        
+        return interResult;
     }
     
     private void initialize() {
@@ -62,7 +93,8 @@ public class Graph {
 
         JToolBar toolBar = new JToolBar();
         frame.getContentPane().add(toolBar, BorderLayout.NORTH);
-// ---------------------------- btn create rectangle ----------------------------
+        
+// ------------------------------- btn Info -------------------------------
         JButton InfoBtn = new JButton("Info");
         InfoBtn.addActionListener(new ActionListener() {
             @Override
@@ -74,7 +106,8 @@ public class Graph {
             }
         });
         toolBar.add(InfoBtn);
-// ---------------------------- btn create rectangle ----------------------------      
+// ------------------------------- btn Info -------------------------------
+        
 // ---------------------------- btn create rectangle ----------------------------
         JButton creatRectBtn = new JButton("New Rectangle");
         creatRectBtn.addActionListener(new ActionListener() {
@@ -89,20 +122,21 @@ public class Graph {
         toolBar.add(creatRectBtn);
 // ---------------------------- btn create rectangle ----------------------------
 
-// ---------------------------- btn resize ----------------------------
-JButton resizeBtn = new JButton("Resize");
-resizeBtn.addActionListener(new ActionListener() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        resetBool();
-        btnResize = true;
-        rectPanel.removeMouseListener(mouseListener);
-        rectPanel.addMouseListener(mouseListener);
-    }
-});
-toolBar.add(resizeBtn);
-// ---------------------------- btn resize ----------------------------
 
+     // ---------------------------- btn resize ----------------------------
+     JButton resizeBtn = new JButton("Resize");
+     resizeBtn.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+             resetBool();
+             btnResize = true;
+             rectPanel.removeMouseListener(mouseListener);
+             rectPanel.addMouseListener(mouseListener);
+         }
+     });
+     toolBar.add(resizeBtn);
+     // ---------------------------- btn resize ----------------------------
+     
 // --------------------------------- btn Union ---------------------------------
         JButton unionBtn = new JButton("Union");
         unionBtn.addActionListener(new ActionListener() {
@@ -132,23 +166,20 @@ toolBar.add(resizeBtn);
 // --------------------------------- btn Inter ---------------------------------
         
 // --------------------------------- btn Move ---------------------------------
-        JButton moveBtn = new JButton("Move form");
+        JButton moveBtn = new JButton("Move");
         moveBtn.addActionListener(new ActionListener() {
-        	@Override
+            @Override
             public void actionPerformed(ActionEvent e) {
-        		resetBool();
-                btnMove = true;
-                rectPanel.removeMouseListener(mouseListener);
-                rectPanel.addMouseListener(mouseListener);
+            	 resetBool();
+            	 btnMove = true;
+            	 rectPanel.removeMouseListener(mouseListener);
+                 rectPanel.addMouseListener(mouseListener);
             }
         });
-        toolBar.add(unionBtn);   
-        
-        JButton btnMove_1 = new JButton("Move");
-        toolBar.add(btnMove_1);
+        toolBar.add(moveBtn);
 // --------------------------------- btn Move ---------------------------------
 
-        // Panel for printing rectangles
+// --------------------- Panel for printing rectangles ------------------------
         rectPanel = new JPanel() {
             @Override
             public void paintComponent(Graphics g) {
@@ -160,44 +191,31 @@ toolBar.add(resizeBtn);
             }
         };
         frame.getContentPane().add(rectPanel, BorderLayout.CENTER);   
-    }
-    
-    private Shap union(Shap shape1, Shap shape2) {
-    	
-        Shap unionResult = new Shap();
-        
-    	for (Rectangle rect : shape1.getRectangles()) {
-            unionResult.addRectangle(rect);
-        }
 
-        for (Rectangle rect : shape2.getRectangles()) {
-            unionResult.addRectangle(rect);
-        }
-
-        return unionResult;
-    }
-    
-    private Shap inter(Shap shape1, Shap shape2) {
-        Shap interResult = new Shap();
-        
-        for (Rectangle rect1 : shape1.getRectangles()) {
-            for (Rectangle rect2 : shape2.getRectangles()) {
-                Rectangle intersection = rect1.intersection(rect2);
-                if (intersection.getWidth() > 0 && intersection.getHeight() > 0) {
-                    interResult.addRectangle(intersection);
+// ================================= Mouse Dragged =================================
+        rectPanel.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                super.mouseDragged(e);
+                if (btnMove && selectedShape1 != null) {
+                    int deltaX = e.getX() - startX;
+                    int deltaY = e.getY() - startY;
+                    selectedShape1.move(deltaX, deltaY);
+                    startX = e.getX();
+                    startY = e.getY();
+                    rectPanel.repaint();
                 }
             }
-        }
-        
-        return interResult;
+        });
     }
-    
-    private MouseListener mouseListener = new MouseAdapter() {
+ // ================================= Mouse Dragged =================================
+
+// ================================= Click Mouse =====================================
+    MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
         	
 // ---------------------------- function create rectangle ----------------------------
-
             if (btnCreatingRectangle) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     if (startX == -1 && startY == -1) {
@@ -312,68 +330,82 @@ toolBar.add(resizeBtn);
                 }
             }
 // --------------------------------- function Inter ----------------------------------
-// --------------------------------- function Resize ----------------------------------
+
+// --------------------------------- function move ----------------------------------
+	         else if (btnMove) {
+	        	 if (SwingUtilities.isLeftMouseButton(e)) {
+	         		
+	         		// 1) select shap 1
+	             	if (selectedShape1 == null) {
+	                     for (int i = shaps.size() - 1; i >= 0; i--) {
+	                         Shap shape = shaps.get(i);
+	                         if (shape.isTouch(e.getX(), e.getY())) {
+	                             selectedShape1 = shape;
+	                             startX = e.getX();
+	                             startY = e.getY();
+	                             System.err.println("Selected id= " + shape.getId());
+	                             break;
+	                         }
+	                     }
+	                 }
+	            }
+	         }
+// --------------------------------- function move ----------------------------------
             
-            else if (btnResize) {
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    System.err.println("Resize");
-                    for (int i = shaps.size() - 1; i >= 0; i--) {
-                        Shap shape = shaps.get(i);
-                        if (shape.isTouch(e.getX(), e.getY())) {
-                            selectedShape1 = shape;
-                            System.err.println("Selected id= " + shape.getId());
-                            for (Rectangle rect : shape.getRectangles()) {
-                                System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
-                                
-                            }
-                            rectPanel.repaint();
-                            break;
-                        }
-                        
-                    }
-                }
-            }
 // --------------------------------- function Resize ----------------------------------
-// --------------------------------- function info ----------------------------------
-            else if (btnInfo) {
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    System.err.println("Info :");
-                    for (int i = shaps.size() - 1; i >= 0; i--) {
-                        Shap shape = shaps.get(i);
-                        if (shape.isTouch(e.getX(), e.getY())) {
-                            selectedShape1 = shape;
-                            System.err.println("Selected id= " + shape.getId());
-
-                            
-                            Graphics g = rectPanel.getGraphics();
-                            shape.selectdraw(g);
-                            if(old!=null){
-                                System.err.println("OLD :");
-                                for (Rectangle rect : old.getRectangles()) {
-                                    System.err.println("OLD X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
-                                }
-                            }else{
-                                for (Rectangle rect : shape.getRectangles()) {
-                                    System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
-                                }
-                            
-                                System.err.println("1 OLD : "+old);
-                                Shap old=shape;
-                                System.err.println("2 OLD : "+old);
-                            }
-                            
-                
-                            
-                            
-                            break;
-                            
-                        }
-                        
-                    }
-
-                }
-            }
-// --------------------------------- function info ----------------------------------
+	         else if (btnResize) {
+	             if (SwingUtilities.isLeftMouseButton(e)) {
+	                 System.err.println("Resize");
+	                 for (int i = shaps.size() - 1; i >= 0; i--) {
+	                     Shap shape = shaps.get(i);
+	                     if (shape.isTouch(e.getX(), e.getY())) {
+	                         selectedShape1 = shape;
+	                         System.err.println("Selected id= " + shape.getId());
+	                         for (Rectangle rect : shape.getRectangles()) {
+	                             System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
+	                         }
+	                         rectPanel.repaint();
+	                         break;
+	                     }
+	                 }
+	             }
+	         }
+//--------------------------------- function Resize ----------------------------------
+            
+//--------------------------------- function info ----------------------------------
+	         else if (btnInfo) {
+	             if (SwingUtilities.isLeftMouseButton(e)) {
+	                 System.err.println("Info :");
+	                 for (int i = shaps.size() - 1; i >= 0; i--) {
+	                     Shap shape = shaps.get(i);
+	                     if (shape.isTouch(e.getX(), e.getY())) {
+	                         selectedShape1 = shape;
+	                         System.err.println("Selected id= " + shape.getId());
+	
+	                 x	        Graphics g = rectPanel.getGraphics();
+	                         shape.selectdraw(g);
+	                         if(old!=null){
+	                             System.err.println("OLD :");
+	                             for (Rectangle rect : old.getRectangles()) {
+	                                 System.err.println("OLD X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
+	                             }
+	                         }else{
+	                             for (Rectangle rect : shape.getRectangles()) {
+	                                 System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
+	                             }
+	                         
+	                             System.err.println("1 OLD : "+old);
+	                             Shap old=shape;
+	                             System.err.println("2 OLD : "+old);
+	                         }
+	                         break;
+	                     }
+	                 }
+	             }
+	         }
+//--------------------------------- function info ----------------------------------
         }
     };
+// ================================= Click Mouse =====================================
+
 }

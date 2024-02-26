@@ -36,12 +36,20 @@ public class Shap {
 		return this.id;
 	}
 	
+	public void move(int deltaX, int deltaY) {
+	    for (Rectangle rectangle : rectangles) {
+	        rectangle.ChangeX(rectangle.getX() + deltaX);
+	        rectangle.ChangeY(rectangle.getY() + deltaY);
+	    }
+	}
+	
 	public void draw(Graphics g) {
         for (Rectangle rectangle : rectangles) {
             g.setColor(Color.GREEN);
             g.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
         }
     }
+	
 	public void selectdraw(Graphics g){
 		for (Rectangle rect : rectangles) {
 			System.err.println("select draw :");
@@ -71,5 +79,4 @@ public class Shap {
 			g.drawLine(x1,y2,x1,y1);
 		}
 	}
-
 }
