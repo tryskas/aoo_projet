@@ -33,7 +33,7 @@ public class Graph {
     private int startX = -1, startY = -1, endX = -1, endY = -1;
     private Shap selectedShape1, selectedShape2 = null, old=null;
     
-    public List<Shap> shaps = new ArrayList<>();
+    public List<Shap> shaps = new ArrayList();
 
 
     public Graph() {
@@ -224,7 +224,6 @@ public class Graph {
                         shaps.add(shap);
                         
                         rectPanel.removeMouseListener(this);
-                        
                         rectPanel.repaint();
                         serializeShapes("shapes.ser");
                         System.err.println("Rectangle créé avec les coordonnées : (" + startX + ", " + startY + ") et (" + endX + ", " + endY + ")");
@@ -237,32 +236,12 @@ public class Graph {
 // --------------------------------- function Union ----------------------------------
             else if (btnUnion) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
-                	// 1) select shap 1
-                	if (selectedShape1 == null) {
-                		for (int i = shaps.size() - 1; i >= 0; i--) {
-                            Shap shape = shaps.get(i);
-                            if (shape.isTouch(e.getX(), e.getY())) {
-                                selectedShape1 = shape;
-                                System.err.println("Selected id= " + shape.getId());
-                                break;
-                            }
-                        }
-                    } 
                 	
-                	// 2) select shap 2
-                    else {
-                        for (int i = shaps.size() - 1; i >= 0; i--) {
-                            Shap shape = shaps.get(i);
-                            if (shape.isTouch(e.getX(), e.getY()) && !shape.equals(selectedShape1)) {
-                                selectedShape2 = shape;
-                                System.err.println("Selected id= " + shape.getId());
-                                break;
-                            }
-                        }
-                    }
+                	// 1) select 2 shaps
+                    selectShap(e.getX(), e.getY(), true);
                 	
-                   // 3) do an inter
-                   if (selectedShape1 != null && selectedShape2 != null) {
+                    // 2) do an inter
+                    if (selectedShape1 != null && selectedShape2 != null) {
                         	
                 	   Shap unionResult = union(selectedShape1, selectedShape2);
                 	   
@@ -284,32 +263,11 @@ public class Graph {
             else if (btnInter) {
             	if (SwingUtilities.isLeftMouseButton(e)) {
             		
-            		// 1) select shap 1
-                	if (selectedShape1 == null) {
-                        for (int i = shaps.size() - 1; i >= 0; i--) {
-                            Shap shape = shaps.get(i);
-                            if (shape.isTouch(e.getX(), e.getY())) {
-                                selectedShape1 = shape;
-                                System.err.println("Selected id= " + shape.getId());
-                                break;
-                            }
-                        }
-                    } 
+            		// 1) select 2 shaps
+                    selectShap(e.getX(), e.getY(), true);
                 	
-                	// 2) select shap 2
-                    else {
-                        for (int i = shaps.size() - 1; i >= 0; i--) {
-                            Shap shape = shaps.get(i);
-                            if (shape.isTouch(e.getX(), e.getY()) && !shape.equals(selectedShape1)) {
-                                selectedShape2 = shape;
-                                System.err.println("Selected id= " + shape.getId());
-                                break;
-                            }
-                        }
-                    }
-                	
-                   // 3) do an inter
-                   if (selectedShape1 != null && selectedShape2 != null) {
+                    // 2) do an inter
+                    if (selectedShape1 != null && selectedShape2 != null) {
                         	
                 	   Shap InterResult = inter(selectedShape1, selectedShape2);
                 	   
@@ -449,14 +407,39 @@ public class Graph {
         
         for (Rectangle rect1 : shape1.getRectangles()) {
             for (Rectangle rect2 : shape2.getRectangles()) {
-                Rectangle intersection = rect1.intersection(rect2);
-                if (intersection.getWidth() > 0 && intersection.getHeight() > 0) {
-                    interResult.addRectangle(intersection);
+                Rectangle intersect = rect1.intersection(rect2);
+                if (intersect.getWidth() > 0 && intersect.getHeight() > 0) {
+                    interResult.addRectangle(intersect);
                 }
             }
         }
         
         return interResult;
+    }
+    
+    public void selectShap(int Xpos, int Ypos, boolean isTwoSelection) {
+    	if (selectedShape1 == null) {
+    		for (int i = shaps.size() - 1; i >= 0; i--) {
+                Shap shape = shaps.get(i);
+                if (shape.isTouch(Xpos, Ypos)) {
+                    selectedShape1 = shape;
+                    System.err.println("Selected id= " + shape.getId());
+                    break;
+                }
+            }
+        } 
+    	
+    	// 2) select shap 2
+    	if (isTwoSelection) {
+    		 for (int i = shaps.size() - 1; i >= 0; i--) {
+                 Shap shape = shaps.get(i);
+                 if (shape.isTouch(Xpos, Ypos) && !shape.equals(selectedShape1)) {
+                     selectedShape2 = shape;
+                     System.err.println("Selected id= " + shape.getId());
+                     break;
+                 }
+             }
+    	}
     }
     
     public static void main(String[] args) {

@@ -15,16 +15,16 @@ public class Rectangle implements Serializable {
         this.width = width;
         this.height = height;
     }
-    public void ChangeX(int new_x) {
+    public void setX(int new_x) {
         this.x = new_x;
     }
-    public void ChangeY(int new_y) {
+    public void setY(int new_y) {
         this.y = new_y;
     }
-    public void ChangeWidth(int new_Width) {
+    public void setWidth(int new_Width) {
         this.width = new_Width;
     }
-    public void ChangHeight(int new_Height) {
+    public void setHeight(int new_Height) {
         this.height = new_Height;
     }
 

@@ -40,8 +40,8 @@ public class Shap implements Serializable {
 	
 	public void move(int deltaX, int deltaY) {
 	    for (Rectangle rectangle : rectangles) {
-	        rectangle.ChangeX(rectangle.getX() + deltaX);
-	        rectangle.ChangeY(rectangle.getY() + deltaY);
+	        rectangle.setX(rectangle.getX() + deltaX);
+	        rectangle.setY(rectangle.getY() + deltaY);
 	    }
 	}
 	
