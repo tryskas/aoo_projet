@@ -1,20 +1,21 @@
 package Forms;
 
 import java.awt.*;
+
 import java.awt.event.*;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.File;
+import javax.imageio.ImageIO;
 
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import java.io.ObjectOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
 
 
 public class Graph {
@@ -22,18 +23,11 @@ public class Graph {
     private JFrame frame;
     private JPanel rectPanel;
       
-    private boolean btnCreatingRectangle = false;
-    
-    private boolean btnUnion = false;
-    private boolean btnInter = false;
-    private boolean btnMove = false;
-    private boolean btnResize = false;
-    private boolean btnInfo = false;
-    
-    private int startX = -1, startY = -1, endX = -1, endY = -1;
+    private boolean btnCreatingRectangle, btnUnion, btnInter, btnMove, btnResize, btnInfo = false;
+    private int startX, startY, endX, endY = -1;
     private Shap selectedShape1, selectedShape2 = null, old=null;
     
-    public List<Shap> shaps = new ArrayList();
+    public List<Shap> shaps = new ArrayList<Shap>();
 
 
     public Graph() {
@@ -62,7 +56,22 @@ public class Graph {
         initialize();
     }
     
+    private ImageIcon resizeImageIcon(String imagePath) {
+        try {
+        	int width = 30;
+        	int height = 30;
+            ImageIcon originalIcon = new ImageIcon(imagePath);
+            Image originalImage = originalIcon.getImage();
+            Image resizedImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            return new ImageIcon(resizedImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
     private void initialize() {
+
         frame = new JFrame();
         frame.setBounds(100, 100, 450, 300);  //size of the window
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -85,7 +94,8 @@ public class Graph {
 // ------------------------------- btn Info -------------------------------
         
 // ---------------------------- btn create rectangle ----------------------------
-        JButton creatRectBtn = new JButton("New Rectangle");
+                
+        JButton creatRectBtn = new JButton(resizeImageIcon("Ressources/rectangle.png"));
         creatRectBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -98,9 +108,22 @@ public class Graph {
         toolBar.add(creatRectBtn);
 // ---------------------------- btn create rectangle ----------------------------
 
-
+        /* FOR CERLCE
+        JButton creatCercBtn = new JButton("New Cercle");
+        creatCercBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	resetBool();
+                btnCreatingCercle = true;
+                rectPanel.removeMouseListener(mouseListener);
+                rectPanel.addMouseListener(mouseListener);
+            }
+        });
+        toolBar.add(creatCercBtn);
+        */
      // ---------------------------- btn resize ----------------------------
-     JButton resizeBtn = new JButton("Resize");
+     JButton resizeBtn = new JButton(resizeImageIcon("Ressources/resize.png"));
+
      resizeBtn.addActionListener(new ActionListener() {
          @Override
          public void actionPerformed(ActionEvent e) {
@@ -114,7 +137,8 @@ public class Graph {
      // ---------------------------- btn resize ----------------------------
      
 // --------------------------------- btn Union ---------------------------------
-        JButton unionBtn = new JButton("Union");
+        JButton unionBtn = new JButton(resizeImageIcon("Ressources/union.png"));
+
         unionBtn.addActionListener(new ActionListener() {
         	@Override
             public void actionPerformed(ActionEvent e) {
@@ -128,7 +152,8 @@ public class Graph {
 // --------------------------------- btn Union ---------------------------------
 
 // --------------------------------- btn Inter ---------------------------------
-        JButton interBtn = new JButton("Inter");
+        JButton interBtn = new JButton(resizeImageIcon("Ressources/inter.png"));
+
         interBtn.addActionListener(new ActionListener() {
         	@Override
             public void actionPerformed(ActionEvent e) {
@@ -142,7 +167,8 @@ public class Graph {
 // --------------------------------- btn Inter ---------------------------------
         
 // --------------------------------- btn Move ---------------------------------
-        JButton moveBtn = new JButton("Move");
+        JButton moveBtn = new JButton(resizeImageIcon("Ressources/move.jpeg"));
+
         moveBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -156,7 +182,8 @@ public class Graph {
 // --------------------------------- btn Move ---------------------------------
         
 // --------------------------------- btn Save ---------------------------------
-        JButton saveBtn = new JButton("Enregistrer");
+        JButton saveBtn = new JButton(resizeImageIcon("Ressources/save.png"));
+
         saveBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -179,9 +206,17 @@ public class Graph {
                for (Shap shap : shaps) {
                    shap.draw(g);
                }
+               if (btnCreatingRectangle && startX != -1 && startY != -1) {
+            	    int width = Math.abs(endX - startX);
+            	    int height = Math.abs(endY - startY);
+            	    int x = Math.min(startX, endX);
+            	    int y = Math.min(startY, endY);
+            	    g.drawRect(x, y, width, height);
+            	}
             }
         };
         frame.getContentPane().add(rectPanel, BorderLayout.CENTER);   
+// --------------------- Panel for printing rectangles ------------------------
 
 // ================================= Mouse Dragged =================================
         rectPanel.addMouseMotionListener(new MouseAdapter() {
@@ -189,26 +224,111 @@ public class Graph {
             public void mouseDragged(MouseEvent e) {
                 super.mouseDragged(e);
                 if (btnMove && selectedShape1 != null) {
+                    
+                    // Calcul du décalage par rapport à la position initiale de la souris
                     int deltaX = e.getX() - startX;
                     int deltaY = e.getY() - startY;
+                    
+                    // Déplacement de la forme en fonction du décalage
                     selectedShape1.move(deltaX, deltaY);
+                    
                     startX = e.getX();
                     startY = e.getY();
+                    
                     rectPanel.repaint();
-                    serializeShapes("shapes.ser");
+                }
+                
+                else if (btnCreatingRectangle) {
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+                        if (startX != -1 && startY != -1) {
+                            endX = e.getX();
+                            endY = e.getY();
+                            rectPanel.repaint();
+                        }
+                    }
+                }
+            }
+        });
+ // ================================= Mouse Dragged =================================
+
+// ================================= Mouse Relaese =================================
+
+        rectPanel.addMouseListener(new MouseAdapter() {
+        	 @Override
+             public void mouseReleased(MouseEvent e) {
+                 if (btnMove) {
+                     selectedShape1 = null;
+                     startX = -1;
+                     startY = -1;
+                 }
+                 
+                 else if (btnCreatingRectangle) {
+                     if (startX != -1 && startY != -1) {
+                         endX = e.getX();
+                         endY = e.getY();
+                         btnCreatingRectangle = false;
+                          
+                        // Ajouter le rectangle à la liste et redessiner le panneau
+                         Shap shap = new Shap();
+                         shap.addRectangle(new Rectangle(Math.min(startX, endX), Math.min(startY, endY), Math.abs(endX - startX), Math.abs(endY - startY)));
+                         shaps.add(shap);
+                             
+                         rectPanel.repaint();
+                         System.err.println("Rectangle créé avec les coordonnées : (" + startX + ", " + startY + ") et (" + endX + ", " + endY + ")");
+                         startX = -1;
+                         startY = -1;
+                         endX = -1;
+                         endY = -1;
+                     }
+                 }
+                 
+                 serializeShapes("shapes.ser");
+             }
+        });
+// ================================= Mouse Relaese =================================
+
+// ================================= Mouse Pressed =================================
+        rectPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (btnMove && SwingUtilities.isLeftMouseButton(e)) {
+                	System.err.println("Moving");
+                    if (selectedShape1 == null) {
+                        for (int i = shaps.size() - 1; i >= 0; i--) {
+                            Shap shape = shaps.get(i);
+                            if (shape.isTouch(e.getX(), e.getY())) {
+                                selectedShape1 = shape;
+                                
+                                // Stockage de la position initiale de la souris par rapport au coin supérieur gauche de la forme
+                                startX = e.getX();
+                                startY = e.getY();
+                                
+                                System.err.println("Selected id= " + shape.getId());
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (btnCreatingRectangle && SwingUtilities.isLeftMouseButton(e)) {
+                	System.err.println("Creating a rectangle");
+                    startX = e.getX();
+                    startY = e.getY();
                 }
             }
         });
     }
- // ================================= Mouse Dragged =================================
+ // ================================= Mouse Pressed =================================
 
-// ================================= Click Mouse =====================================
+ // ================================= Click Mouse =====================================
     MouseListener mouseListener = new MouseAdapter() {
         @Override
-        public void mouseClicked(MouseEvent e) {
-        	
-// ---------------------------- function create rectangle ----------------------------
-            if (btnCreatingRectangle) {
+        public void mousePressed(MouseEvent e) {
+            
+// ---------------------------- function create cercle ----------------------------
+            /* FOR CERLCE
+            if (btnCreatingCercle) {
+            	
                 if (SwingUtilities.isLeftMouseButton(e)) {
                     if (startX == -1 && startY == -1) {
                         startX = e.getX();
@@ -216,25 +336,27 @@ public class Graph {
                     } else {
                         endX = e.getX();
                         endY = e.getY();
-                        btnCreatingRectangle = false;
+                        btnCreatingCercle = false;
                         
                         //ajoute un rectangle a la liste.
                         Shap shap = new Shap();
-                        shap.addRectangle(new Rectangle(Math.min(startX, endX), Math.min(startY, endY), Math.abs(endX - startX), Math.abs(endY - startY)));
+                        int rayon = (int) Math.sqrt(Math.pow(Math.abs(endX-startX), 2) + Math.pow(Math.abs(endY-startY), 2));
+                        shap.addCercle(new Cercle(startX, startY, rayon));
                         shaps.add(shap);
                         
                         rectPanel.removeMouseListener(this);
                         rectPanel.repaint();
                         serializeShapes("shapes.ser");
-                        System.err.println("Rectangle créé avec les coordonnées : (" + startX + ", " + startY + ") et (" + endX + ", " + endY + ")");
+                        System.err.println("Cercle créé avec les coordonnées : (" + startX + ", " + startY + ") et de rayon :" + (int) Math.sqrt(Math.pow(Math.abs(endX-startX), 2) + Math.pow(Math.abs(endY-startY), 2)));
                         startX=-1; startY=-1;
                     }
                 }
-            }       
-// ---------------------------- function create rectangle ----------------------------
+            } 
+            */      
+// ---------------------------- function create cercle ----------------------------
             
 // --------------------------------- function Union ----------------------------------
-            else if (btnUnion) {
+            if (btnUnion) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
                 	
                 	// 1) select 2 shaps
@@ -285,27 +407,6 @@ public class Graph {
             }
 // --------------------------------- function Inter ----------------------------------
 
-// --------------------------------- function move ----------------------------------
-	         else if (btnMove) {
-	        	 if (SwingUtilities.isLeftMouseButton(e)) {
-	         		
-	         		// 1) select shap 1
-	             	if (selectedShape1 == null) {
-	                     for (int i = shaps.size() - 1; i >= 0; i--) {
-	                         Shap shape = shaps.get(i);
-	                         if (shape.isTouch(e.getX(), e.getY())) {
-	                             selectedShape1 = shape;
-	                             startX = e.getX();
-	                             startY = e.getY();
-	                             System.err.println("Selected id= " + shape.getId());
-	                             break;
-	                         }
-	                     }
-	                 }
-	            }
-	         }
-// --------------------------------- function move ----------------------------------
-            
 // --------------------------------- function Resize ----------------------------------
 	         else if (btnResize) {
 	             if (SwingUtilities.isLeftMouseButton(e)) {
@@ -365,6 +466,7 @@ public class Graph {
     
     public void resetBool() {
     	this.btnCreatingRectangle = false;
+    	//this.btnCreatingCercle = false;
     	this.btnInter = false;
     	this.btnUnion = false;
     	this.btnMove = false;
@@ -395,10 +497,18 @@ public class Graph {
     	for (Rectangle rect : shape1.getRectangles()) {
             unionResult.addRectangle(rect);
         }
-
+    	/*for (Cercle cerc : shape1.getCercles()) { FOR CERLCE
+    		unionResult.addCercle(cerc);
+    	}
+		*/
         for (Rectangle rect : shape2.getRectangles()) {
             unionResult.addRectangle(rect);
         }
+        /*
+        for (Cercle cerc : shape2.getCercles()) { FOR CERLCE
+    		unionResult.addCercle(cerc);
+    	}
+    	*/
         return unionResult;
     }
     
