@@ -309,17 +309,19 @@ public class Graph {
 // --------------------------------- function Resize ----------------------------------
 	         else if (btnResize) {
 	             if (SwingUtilities.isLeftMouseButton(e)) {
-	                 System.err.println("Resize");
+	                 
 	                 for (int i = shaps.size() - 1; i >= 0; i--) {
 	                     Shap shape = shaps.get(i);
 	                     if (shape.isTouch(e.getX(), e.getY())) {
 	                         selectedShape1 = shape;
+	                         System.err.println("Resize");
 	                         System.err.println("Selected id= " + shape.getId());
 	                         for (Rectangle rect : shape.getRectangles()) {
 	                             System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
 	                         }
-	                         rectPanel.repaint();
-	                         serializeShapes("shapes.ser");
+	                         //rectPanel.repaint();
+	                         //serializeShapes("shapes.ser");
+	                         System.err.println("test :");
 	                         break;
 	                     }
 	                 }
@@ -354,7 +356,10 @@ public class Graph {
 	                             System.err.println("2 OLD : "+old);
 	                         }
 	                         break;
-	                     }
+	                     }else {
+	                    	 System.err.println("Hors du cadre");	
+	                    	 
+	                    	 }
 	                 }
 	             }
 	         }

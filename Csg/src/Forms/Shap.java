@@ -51,8 +51,41 @@ public class Shap implements Serializable {
             g.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
         }
     }
+	private boolean dessinerPoints = true;
+	public void setDessinerPoints(boolean dessiner) {
+	    this.dessinerPoints = dessiner;
+	}
+	private void dessinerPoints(Graphics g, int x1, int y1, int x2, int y2) {
+	    if (dessinerPoints) {
+	        //coin en haut à gauche
+	        g.fillRect(x1-5, y1-5, 10, 10);
+
+	        //milieu en haut
+	        g.fillRect((x1+x2)/2-5, y1-5, 10, 10);
+
+	        //coin en haut à droite
+	        g.fillRect(x2-5, y1-5, 10, 10);
+
+	        //coin en bas à gauche
+	        g.fillRect(x1-5, y2-5, 10, 10);
+
+	        //milieu en bas
+	        g.fillRect((x1+x2)/2-5, y2-5, 10, 10);
+
+	        //coin en bas à droite
+	        g.fillRect(x2-5, y2-5, 10, 10);
+
+	        //milieu gauche
+	        g.fillRect(x1-5, (y1+y2)/2-5, 10, 10);
+
+	        //milieu droit
+	        g.fillRect(x2-5, (y1+y2)/2-5, 10, 10);
+	    }
+	}
+	
 	
 	public void selectdraw(Graphics g){
+		dessinerPoints = !dessinerPoints;
 		for (Rectangle rect : rectangles) {
 			System.err.println("select draw :");
 			//System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
@@ -79,6 +112,9 @@ public class Shap implements Serializable {
 			g.drawLine(x2,y2,x1,y2);
 
 			g.drawLine(x1,y2,x1,y1);
+			
+			dessinerPoints(g, x1, y1, x2, y2);
+			
 		}
 	}
 }
