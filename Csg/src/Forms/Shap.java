@@ -51,12 +51,15 @@ public class Shap implements Serializable {
             g.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
         }
     }
-	private boolean dessinerPoints = true;
+	private boolean dessinerPoints = false;
 	public void setDessinerPoints(boolean dessiner) {
+
 	    this.dessinerPoints = dessiner;
 	}
 	private void dessinerPoints(Graphics g, int x1, int y1, int x2, int y2) {
 	    if (dessinerPoints) {
+	    	System.out.println("créer...");
+	    	Shape ancienneForme = g.getClip();
 	        //coin en haut à gauche
 	        g.fillRect(x1-5, y1-5, 10, 10);
 
@@ -80,41 +83,28 @@ public class Shap implements Serializable {
 
 	        //milieu droit
 	        g.fillRect(x2-5, (y1+y2)/2-5, 10, 10);
+	    }else {
+	    	System.out.println("effacer...");
+	    	
+	    	
+            
 	    }
+	    
 	}
 	
-	
-	public void selectdraw(Graphics g){
-		dessinerPoints = !dessinerPoints;
-		for (Rectangle rect : rectangles) {
-			System.err.println("select draw :");
-			//System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
-			List<Integer> listex = new LinkedList<Integer>(); 
-			List<Integer> listey = new LinkedList<Integer>(); 
-			listex.add(rect.getX());
-			listex.add((rect.getX()+rect.getWidth()));
-			listey.add(rect.getY());
-			listey.add((rect.getY()+rect.getHeight()));
-
-
-			System.out.println("Le maximum est: "+ Collections.max(listex)+" et "+ Collections.max(listey)); 
-			System.out.println("Le minimum est: "+ Collections.min(listex)+" et "+ Collections.min(listey)); 
-
-			int x1=Collections.min(listex);
-			int y1=Collections.min(listey);
-			int x2=Collections.max(listex);
-			int y2=Collections.max(listey);
-
-			g.drawLine(x1,y1,x2,y1);
-
-			g.drawLine(x2,y1,x2,y2);
-
-			g.drawLine(x2,y2,x1,y2);
-
-			g.drawLine(x1,y2,x1,y1);
-			
-			dessinerPoints(g, x1, y1, x2, y2);
-			
-		}
+	public void resetdraw(Graphics g) {
+		for (Rectangle forme : rectangles) {
+            
+        }
+	}
+	public void selectdraw(Graphics g,boolean status){
+		if(status){
+			System.out.println("dessiner");
+            g.drawRect(50, 50, 50, 50); 
+        } else {
+            System.out.println("effacer");
+            g.setColor(Color.WHITE); 
+            g.fillRect(50, 50, 50, 50);
+        }
 	}
 }

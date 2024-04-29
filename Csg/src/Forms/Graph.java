@@ -18,7 +18,7 @@ import java.io.ObjectInputStream;
 
 
 public class Graph {
-
+	
     private JFrame frame;
     private JPanel rectPanel;
       
@@ -203,6 +203,8 @@ public class Graph {
  // ================================= Mouse Dragged =================================
 
 // ================================= Click Mouse =====================================
+    Shap oldshape = null;
+    Shap shape = null;
     MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -331,38 +333,43 @@ public class Graph {
             
 //--------------------------------- function info ----------------------------------
 	         else if (btnInfo) {
+	        	 List<Object> maListe = new ArrayList<>();
+	        	 
 	             if (SwingUtilities.isLeftMouseButton(e)) {
-	                 System.err.println("Info :");
-	                 for (int i = shaps.size() - 1; i >= 0; i--) {
-	                     Shap shape = shaps.get(i);
-	                     if (shape.isTouch(e.getX(), e.getY())) {
-	                         selectedShape1 = shape;
-	                         System.err.println("Selected id= " + shape.getId());
-	
-	                         Graphics g = rectPanel.getGraphics();
-	                         shape.selectdraw(g);
-	                         if(old!=null){
-	                             System.err.println("OLD :");
-	                             for (Rectangle rect : old.getRectangles()) {
-	                                 System.err.println("OLD X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
-	                             }
-	                         }else{
-	                             for (Rectangle rect : shape.getRectangles()) {
-	                                 System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
-	                             }
+	            	 int compteur=0;
+	            	 for (int i = shaps.size() - 1; i >= 0; i--) {
+	            		 Shap shape = shaps.get(i);
+	            		 
+	            		 if (shape.isTouch(e.getX(), e.getY())) {
+	            			 selectedShape1 = shape;
+	            			 System.err.println(shape);
+	            			 maListe.add(selectedShape1);
+	            			 
+	            			 oldshape= shape;
+	            			 
+	            			 Graphics g = rectPanel.getGraphics();
+	                         shape.selectdraw(g,true);
 	                         
-	                             System.err.println("1 OLD : "+old);
-	                             Shap old=shape;
-	                             System.err.println("2 OLD : "+old);
-	                         }
-	                         break;
-	                     }else {
-	                    	 System.err.println("Hors du cadre");	
-	                    	 
-	                    	 }
-	                 }
+	            			 
+	                         
+	            		 }
+	            		 
+	            	 }
+	            	 if((maListe.size())==0) {
+	            		 System.out.println("Aucune forme detecté");
+	            		 System.out.println(oldshape);
+	            		 if(oldshape != null) {
+	            			 
+	            			 rectPanel.revalidate();
+	            			 rectPanel.repaint();
+	            			 
+	            			 Graphics g =rectPanel.getGraphics();
+	            			 oldshape.resetdraw(g);
+	            		 }
+	            	 }
 	             }
 	         }
+	         
 //--------------------------------- function info ----------------------------------
         }
     };
@@ -373,6 +380,8 @@ public class Graph {
     	this.btnInter = false;
     	this.btnUnion = false;
     	this.btnMove = false;
+    	this.btnInfo = false;
+    	this.btnResize=false;
     	this.startX = -1;
     	this.startY = -1;
     	this.endX = -1;
