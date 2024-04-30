@@ -21,7 +21,8 @@ public class Graph {
 	
     private JFrame frame;
     private JPanel rectPanel;
-      
+    private JFrame info;
+    
     private boolean btnCreatingRectangle = false;
     
     private boolean btnUnion = false;
@@ -35,7 +36,7 @@ public class Graph {
     
     public List<Shap> shaps = new ArrayList();
 
-
+    
     public Graph() {
     	
     	int choice = JOptionPane.showConfirmDialog(null, "Do you want to load from the latest version of the project?", "Loading choice", JOptionPane.YES_NO_OPTION);
@@ -69,6 +70,14 @@ public class Graph {
 
         JToolBar toolBar = new JToolBar();
         frame.getContentPane().add(toolBar, BorderLayout.NORTH);
+        
+        int xOffset = frame.getX() + frame.getWidth();
+        int yOffset = frame.getY(); 
+        info = new JFrame();
+        info.setBounds(xOffset, yOffset, 300, 200); 
+        info.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
+        info.setVisible(true); 
+
         
 // ------------------------------- btn Info -------------------------------
         JButton InfoBtn = new JButton("Info");
@@ -199,7 +208,11 @@ public class Graph {
                 }
             }
         });
+    
+    
+    
     }
+	
  // ================================= Mouse Dragged =================================
 
 // ================================= Click Mouse =====================================
@@ -337,35 +350,36 @@ public class Graph {
 	        	 
 	             if (SwingUtilities.isLeftMouseButton(e)) {
 	            	 int compteur=0;
-	            	 for (int i = shaps.size() - 1; i >= 0; i--) {
-	            		 Shap shape = shaps.get(i);
-	            		 
-	            		 if (shape.isTouch(e.getX(), e.getY())) {
-	            			 selectedShape1 = shape;
-	            			 System.err.println(shape);
-	            			 maListe.add(selectedShape1);
-	            			 
-	            			 oldshape= shape;
-	            			 
-	            			 Graphics g = rectPanel.getGraphics();
-	                         shape.selectdraw(g,true);
-	                         
-	            			 
-	                         
-	            		 }
-	            		 
+	            	 if(oldshape==null) {
+		            	 for (int i = shaps.size() - 1; i >= 0; i--) {
+		            		 Shap shape = shaps.get(i);
+		            		 
+		            		 if (shape.isTouch(e.getX(), e.getY())) {
+		            			 if(shape!=null) {
+			            			 ajouterTexte(shape.toString());
+			            		 }
+		            			 selectedShape1 = shape;
+		            			 System.err.println(shape);
+		            			 maListe.add(selectedShape1);
+		            			 
+		            			 oldshape= shape;
+		            			 
+		            			 Graphics g = rectPanel.getGraphics();
+		                         shape.selectdraw(g,true,rectPanel);
+
+		            		 }
+		            	 }
 	            	 }
+	            	 
 	            	 if((maListe.size())==0) {
+	            		 
+	            		 ajouterTexte("Rien");
 	            		 System.out.println("Aucune forme detecté");
 	            		 System.out.println(oldshape);
-	            		 if(oldshape != null) {
-	            			 
-	            			 rectPanel.revalidate();
-	            			 rectPanel.repaint();
-	            			 
-	            			 Graphics g =rectPanel.getGraphics();
-	            			 oldshape.resetdraw(g);
-	            		 }
+	            		 rectPanel.revalidate();
+            			 rectPanel.repaint();
+            			 oldshape=null;
+	            		
 	            	 }
 	             }
 	         }
@@ -468,5 +482,16 @@ public class Graph {
                 }
             }
         });
+    }
+    
+    private void ajouterTexte(String texte) {
+    	if(info!=null) {
+    		info.getContentPane().removeAll();
+    		System.out.println("écriture en cours");
+    		JLabel label = new JLabel(texte);
+            this.info.add(label);
+            info.revalidate();
+            info.repaint();
+    	}
     }
 }

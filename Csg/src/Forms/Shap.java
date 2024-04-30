@@ -1,10 +1,14 @@
 package Forms;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.swing.JPanel;
 
 import java.io.Serializable;
 
@@ -56,55 +60,88 @@ public class Shap implements Serializable {
 
 	    this.dessinerPoints = dessiner;
 	}
-	private void dessinerPoints(Graphics g, int x1, int y1, int x2, int y2) {
-	    if (dessinerPoints) {
-	    	System.out.println("créer...");
-	    	Shape ancienneForme = g.getClip();
+	private void dessinerPoints(Graphics g, int x1, int y1, int x2, int y2,JPanel rectPanel) {
 	        //coin en haut à gauche
 	        g.fillRect(x1-5, y1-5, 10, 10);
-
 	        //milieu en haut
 	        g.fillRect((x1+x2)/2-5, y1-5, 10, 10);
-
 	        //coin en haut à droite
 	        g.fillRect(x2-5, y1-5, 10, 10);
-
 	        //coin en bas à gauche
 	        g.fillRect(x1-5, y2-5, 10, 10);
-
 	        //milieu en bas
 	        g.fillRect((x1+x2)/2-5, y2-5, 10, 10);
-
 	        //coin en bas à droite
 	        g.fillRect(x2-5, y2-5, 10, 10);
-
 	        //milieu gauche
 	        g.fillRect(x1-5, (y1+y2)/2-5, 10, 10);
-
 	        //milieu droit
 	        g.fillRect(x2-5, (y1+y2)/2-5, 10, 10);
-	    }else {
-	    	System.out.println("effacer...");
-	    	
-	    	
-            
-	    }
-	    
+	        
+	        rectPanel.addMouseListener(new MouseAdapter() {
+	            @Override
+	            public void mouseClicked(MouseEvent e) {
+	                int mouseX = e.getX();
+	                int mouseY = e.getY();
+
+	                // Vérifiez si le clic est à l'intérieur du carré en haut à gauche
+	                if (mouseX >= x1 - 5 && mouseX <= x1 + 5 && mouseY >= y1 - 5 && mouseY <= y1 + 5) {
+	                    System.out.println("click souris good");
+	                    rectPanel.repaint();
+	                }
+	                // Ajoutez des conditions similaires pour les autres carrés
+	                // ...
+
+	            }
+	            
+	        });
 	}
 	
-	public void resetdraw(Graphics g) {
-		for (Rectangle forme : rectangles) {
-            
-        }
-	}
-	public void selectdraw(Graphics g,boolean status){
+
+	public void selectdraw(Graphics g,boolean status,JPanel rectPanel){
+		
+		List<Integer> listex = new LinkedList<Integer>(); 
+		List<Integer> listey = new LinkedList<Integer>(); 
+		for (Rectangle rect : rectangles) {
+			System.err.println("select draw :");
+			//System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
+			listex.add(rect.getX());
+			listex.add((rect.getX()+rect.getWidth()));
+			listey.add(rect.getY());
+			listey.add((rect.getY()+rect.getHeight()));
+		}
+			System.out.println("Le maximum est: "+ Collections.max(listex)+" et "+ Collections.max(listey)); 
+			System.out.println("Le minimum est: "+ Collections.min(listex)+" et "+ Collections.min(listey)); 
+
+			int x1=Collections.min(listex);
+			int y1=Collections.min(listey);
+			int x2=Collections.max(listex);
+			int y2=Collections.max(listey);
+
+			Graphics2D g2d = (Graphics2D) g;
+			float[] dashPattern = {5, 5};
+			BasicStroke dashedStroke = new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashPattern, 0.0f);
+			g2d.setStroke(dashedStroke);
+			
+			g.drawLine(x1,y1,x2,y1);
+
+			g.drawLine(x2,y1,x2,y2);
+
+			g.drawLine(x2,y2,x1,y2);
+
+			g.drawLine(x1,y2,x1,y1);
+			
+			
+		
 		if(status){
+			
 			System.out.println("dessiner");
-            g.drawRect(50, 50, 50, 50); 
+			dessinerPoints(g, x1, y1, x2, y2,rectPanel);
         } else {
             System.out.println("effacer");
             g.setColor(Color.WHITE); 
             g.fillRect(50, 50, 50, 50);
         }
+		
 	}
 }
