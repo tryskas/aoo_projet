@@ -16,25 +16,43 @@ public class Shap implements Serializable {
 	private static int nextId = 1;
     private int id;
 	private List<Rectangle> rectangles;
+	// private List<Cercle> cercles; FOR CERCLE
 	
 	public Shap() {
 		id = nextId;
 		nextId++;
-		rectangles = new ArrayList();
+		rectangles = new ArrayList<Rectangle>();
+		// cercles = new ArrayList<Cercle>(); FOR CERCLE
 	}
 	public void addRectangle(Rectangle rectangle) {
 		rectangles.add(rectangle);
 	}
+	/* FOR CERCLE
+	public void addCercle(Cercle cercle) {
+		cercles.add(cercle);
+	}
+	*/
 	
 	public List<Rectangle> getRectangles() {
         return rectangles;
     }
+	/* FOR CERCLE
+	public List<Cercle> getCercles(){
+		return this.cercles;
+	}
+	*/
 	
 	public boolean isTouch(int x, int y) {
 		for (int i = rectangles.size() - 1; i >= 0; i--) {
 			Rectangle rectangle = rectangles.get(i);
 	        if (rectangle.contains(x, y)) return true;
 	    }
+		/* FOR CERCLE
+		for (int i = cercles.size() - 1; i >= 0; i--) {
+			Cercle cercle = cercles.get(i);
+	        if (cercle.contains(x, y)) return true;
+	    }
+	    */
 	    return false;
 	}
 	
@@ -47,6 +65,12 @@ public class Shap implements Serializable {
 	        rectangle.setX(rectangle.getX() + deltaX);
 	        rectangle.setY(rectangle.getY() + deltaY);
 	    }
+	    /* FOR CERCLE
+	    for (Cercle cercle : cercles) {
+	    	cercle.setX(cercle.getX() + deltaX);
+	        cercle.setY(cercle.getY() + deltaY);
+	    }
+	    */
 	}
 	
 	public void draw(Graphics g) {
@@ -54,6 +78,12 @@ public class Shap implements Serializable {
             g.setColor(Color.GREEN);
             g.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
         }
+        /* FOR CERCLE
+        for (Cercle cercle : cercles){
+        	g.setColor(Color.red);
+        	g.fillOval(cercle.getX()-cercle.getR(), cercle.getY()-cercle.getR(), cercle.getR()*2, cercle.getR()*2);
+        }
+        */
     }
 	private boolean dessinerPoints = false;
 	public void setDessinerPoints(boolean dessiner) {
