@@ -114,13 +114,11 @@ public class Shap implements Serializable {
 	                int mouseX = e.getX();
 	                int mouseY = e.getY();
 
-	                // Vérifiez si le clic est à l'intérieur du carré en haut à gauche
 	                if (mouseX >= x1 - 5 && mouseX <= x1 + 5 && mouseY >= y1 - 5 && mouseY <= y1 + 5) {
 	                    System.out.println("click souris good");
 	                    rectPanel.repaint();
 	                }
-	                // Ajoutez des conditions similaires pour les autres carrés
-	                // ...
+	                
 
 	            }
 	            
