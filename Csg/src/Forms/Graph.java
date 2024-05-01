@@ -21,14 +21,12 @@ import java.util.List;
 public class Graph {
 
     private JFrame frame;
+    private JFrame info;	
     private JPanel rectPanel;
-      
     private boolean btnCreatingRectangle, btnUnion, btnInter, btnMove, btnResize, btnInfo = false;
     private int startX, startY, endX, endY = -1;
     private Shap selectedShape1, selectedShape2 = null, old=null;
-    
     public List<Shap> shaps = new ArrayList<Shap>();
-
 
     public Graph() {
     	
@@ -79,6 +77,13 @@ public class Graph {
         JToolBar toolBar = new JToolBar();
         frame.getContentPane().add(toolBar, BorderLayout.NORTH);
         
+        int xOffset = frame.getX() + frame.getWidth();
+		int yOffset = frame.getY();
+		info = new JFrame();
+		info.setBounds(xOffset, yOffset, 300, 200);
+		info.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		info.setVisible(true); 
+        
 // ------------------------------- btn Info -------------------------------
         JButton InfoBtn = new JButton("Info");
         InfoBtn.addActionListener(new ActionListener() {
@@ -121,7 +126,7 @@ public class Graph {
         });
         toolBar.add(creatCercBtn);
         */
-     // ---------------------------- btn resize ----------------------------
+// ---------------------------- btn resize ----------------------------
      JButton resizeBtn = new JButton(resizeImageIcon("Ressources/resize.png"));
 
      resizeBtn.addActionListener(new ActionListener() {
@@ -134,7 +139,7 @@ public class Graph {
          }
      });
      toolBar.add(resizeBtn);
-     // ---------------------------- btn resize ----------------------------
+// ---------------------------- btn resize ----------------------------
      
 // --------------------------------- btn Union ---------------------------------
         JButton unionBtn = new JButton(resizeImageIcon("Ressources/union.png"));
@@ -249,7 +254,7 @@ public class Graph {
                 }
             }
         });
- // ================================= Mouse Dragged =================================
+// ================================= Mouse Dragged =================================
 
 // ================================= Mouse Relaese =================================
 
@@ -318,12 +323,14 @@ public class Graph {
             }
         });
     }
- // ================================= Mouse Pressed =================================
+// ================================= Mouse Pressed =================================
 
- // ================================= Click Mouse =====================================
+// ================================= Click Mouse =====================================
     MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
+        	
+        	 Shap oldshape = null;
             
 // ---------------------------- function create cercle ----------------------------
             /* FOR CERLCE
@@ -401,7 +408,6 @@ public class Graph {
                        selectedShape1 = null;
                        selectedShape2 = null;
                        rectPanel.repaint();
-                       serializeShapes("shapes.ser");
                    }
                 }
             }
@@ -410,17 +416,19 @@ public class Graph {
 // --------------------------------- function Resize ----------------------------------
 	         else if (btnResize) {
 	             if (SwingUtilities.isLeftMouseButton(e)) {
-	                 System.err.println("Resize");
+	                 
 	                 for (int i = shaps.size() - 1; i >= 0; i--) {
 	                     Shap shape = shaps.get(i);
 	                     if (shape.isTouch(e.getX(), e.getY())) {
 	                         selectedShape1 = shape;
+	                         System.err.println("Resize");
 	                         System.err.println("Selected id= " + shape.getId());
 	                         for (Rectangle rect : shape.getRectangles()) {
 	                             System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
 	                         }
-	                         rectPanel.repaint();
-	                         serializeShapes("shapes.ser");
+	                         //rectPanel.repaint();
+	                         //serializeShapes("shapes.ser");
+	                         System.err.println("test :");
 	                         break;
 	                     }
 	                 }
@@ -430,35 +438,44 @@ public class Graph {
             
 //--------------------------------- function info ----------------------------------
 	         else if (btnInfo) {
+	        	 List<Object> maListe = new ArrayList<>();
+	        	 
 	             if (SwingUtilities.isLeftMouseButton(e)) {
-	                 System.err.println("Info :");
-	                 for (int i = shaps.size() - 1; i >= 0; i--) {
-	                     Shap shape = shaps.get(i);
-	                     if (shape.isTouch(e.getX(), e.getY())) {
-	                         selectedShape1 = shape;
-	                         System.err.println("Selected id= " + shape.getId());
-	
-	                         Graphics g = rectPanel.getGraphics();
-	                         shape.selectdraw(g);
-	                         if(old!=null){
-	                             System.err.println("OLD :");
-	                             for (Rectangle rect : old.getRectangles()) {
-	                                 System.err.println("OLD X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
-	                             }
-	                         }else{
-	                             for (Rectangle rect : shape.getRectangles()) {
-	                                 System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
-	                             }
-	                         
-	                             System.err.println("1 OLD : "+old);
-	                             Shap old=shape;
-	                             System.err.println("2 OLD : "+old);
-	                         }
-	                         break;
-	                     }
-	                 }
+	            	 int compteur=0;
+	            	 if(oldshape==null) {
+		            	 for (int i = shaps.size() - 1; i >= 0; i--) {
+		            		 Shap shape = shaps.get(i);
+		            		 
+		            		 if (shape.isTouch(e.getX(), e.getY())) {
+		            			 if(shape!=null) {
+			            			 ajouterTexte(shape.toString());
+			            		 }
+		            			 selectedShape1 = shape;
+		            			 System.err.println(shape);
+		            			 maListe.add(selectedShape1);
+		            			 
+		            			 oldshape= shape;
+		            			 
+		            			 Graphics g = rectPanel.getGraphics();
+		                         shape.selectdraw(g,true,rectPanel);
+
+		            		 }
+		            	 }
+	            	 }
+	            	 
+	            	 if((maListe.size())==0) {
+	            		 
+	            		 ajouterTexte("Rien");
+	            		 System.out.println("Aucune forme detecté");
+	            		 System.out.println(oldshape);
+	            		 rectPanel.revalidate();
+            			 rectPanel.repaint();
+            			 oldshape=null;
+	            		
+	            	 }
 	             }
 	         }
+	         
 //--------------------------------- function info ----------------------------------
         }
     };
@@ -552,6 +569,17 @@ public class Graph {
     	}
     }
     
+    private void ajouterTexte(String texte) {
+    	if(info!=null) {
+    		info.getContentPane().removeAll();
+    		System.out.println("écriture en cours");
+    		JLabel label = new JLabel(texte);
+            this.info.add(label);
+            info.revalidate();
+            info.repaint();
+    	}
+    }
+   
     public static void main(String[] args) {
         
         EventQueue.invokeLater(new Runnable() {

@@ -24,7 +24,7 @@ public class Rectangle implements Serializable {
     public void setWidth(int new_Width) {
         this.width = new_Width;
     }
-    public void setHeight(int new_Height) {
+    public void setHeight(int new_Height) 	{
         this.height = new_Height;
     }
 
