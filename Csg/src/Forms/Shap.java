@@ -121,7 +121,8 @@ public class Shap implements Serializable {
 
 	            }
 	            
-	        });
+	        }
+	    );
 	}
 	
 
