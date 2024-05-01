@@ -1,0 +1,25 @@
+package algebre;
+
+public class Number {
+	
+	private float number;
+	
+	public Number(float nb) {
+		this.number = nb;
+	}
+	
+	public float getNumber() {
+		return number;
+	}
+	
+	public float plus (Number B) {
+		return number + B.getNumber();
+	}
+	public static void main(String[] args) {
+		Number A = new Number (0);
+		Number B = new Number (1);
+		
+		System.out.println(A.plus(B));
+	}
+
+}
