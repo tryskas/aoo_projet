@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.File;
@@ -54,20 +53,6 @@ public class Graph {
         initialize();
     }
     
-    private ImageIcon resizeImageIcon(String imagePath) {
-        try {
-        	int width = 30;
-        	int height = 30;
-            ImageIcon originalIcon = new ImageIcon(imagePath);
-            Image originalImage = originalIcon.getImage();
-            Image resizedImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            return new ImageIcon(resizedImage);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    
     private void initialize() {
 
         frame = new JFrame();
@@ -100,7 +85,7 @@ public class Graph {
         
 // ---------------------------- btn create rectangle ----------------------------
                 
-        JButton creatRectBtn = new JButton(resizeImageIcon("Ressources/rectangle.png"));
+        JButton creatRectBtn = new JButton("create");
         creatRectBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -127,7 +112,7 @@ public class Graph {
         toolBar.add(creatCercBtn);
         */
 // ---------------------------- btn resize ----------------------------
-     JButton resizeBtn = new JButton(resizeImageIcon("Ressources/resize.png"));
+     JButton resizeBtn = new JButton("resize");
 
      resizeBtn.addActionListener(new ActionListener() {
          @Override
@@ -140,9 +125,8 @@ public class Graph {
      });
      toolBar.add(resizeBtn);
 // ---------------------------- btn resize ----------------------------
-     
 // --------------------------------- btn Union ---------------------------------
-        JButton unionBtn = new JButton(resizeImageIcon("Ressources/union.png"));
+        JButton unionBtn = new JButton("union");
 
         unionBtn.addActionListener(new ActionListener() {
         	@Override
@@ -157,7 +141,7 @@ public class Graph {
 // --------------------------------- btn Union ---------------------------------
 
 // --------------------------------- btn Inter ---------------------------------
-        JButton interBtn = new JButton(resizeImageIcon("Ressources/inter.png"));
+        JButton interBtn = new JButton("inter");
 
         interBtn.addActionListener(new ActionListener() {
         	@Override
@@ -172,7 +156,7 @@ public class Graph {
 // --------------------------------- btn Inter ---------------------------------
         
 // --------------------------------- btn Move ---------------------------------
-        JButton moveBtn = new JButton(resizeImageIcon("Ressources/move.jpeg"));
+        JButton moveBtn = new JButton("move");
 
         moveBtn.addActionListener(new ActionListener() {
             @Override
@@ -187,7 +171,7 @@ public class Graph {
 // --------------------------------- btn Move ---------------------------------
         
 // --------------------------------- btn Save ---------------------------------
-        JButton saveBtn = new JButton(resizeImageIcon("Ressources/save.png"));
+        JButton saveBtn = new JButton("save");
 
         saveBtn.addActionListener(new ActionListener() {
             @Override
