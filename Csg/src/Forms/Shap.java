@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class Shap implements Serializable {
 	private static int nextId = 1;
     private int id;
+    private boolean pointdessiner=false; 
 	private List<Rectangle> rectangles;
 	// private List<Cercle> cercles; FOR CERCLE
 	
@@ -24,6 +25,7 @@ public class Shap implements Serializable {
 		// cercles = new ArrayList<Cercle>(); FOR CERCLE
 	}
 	public void addRectangle(Rectangle rectangle) {
+		
 		rectangles.add(rectangle);
 	}
 	/* FOR CERCLE
@@ -31,6 +33,11 @@ public class Shap implements Serializable {
 		cercles.add(cercle);
 	}
 	*/
+	public void removeRectangle() {
+		for (int i = rectangles.size() - 1; i >= rectangles.size()-7; i--) {
+			rectangles.remove(rectangles.get(i));
+		}
+	}
 	
 	public List<Rectangle> getRectangles() {
         return rectangles;
@@ -153,6 +160,9 @@ public class Shap implements Serializable {
 	}
 	private void dessinerPoints(Graphics g, int x1, int y1, int x2, int y2,JPanel rectPanel) {
 	        //coin en haut à gauche
+		if(pointdessiner==false) {
+			Rectangle rect1 = new Rectangle((x1-5),(y1-5),10,10);
+			addRectangle(rect1);
 	        g.fillRect(x1-5, y1-5, 10, 10);
 	        //milieu en haut
 	        g.fillRect((x1+x2)/2-5, y1-5, 10, 10);
@@ -168,12 +178,18 @@ public class Shap implements Serializable {
 	        g.fillRect(x1-5, (y1+y2)/2-5, 10, 10);
 	        //milieu droit
 	        g.fillRect(x2-5, (y1+y2)/2-5, 10, 10);
-	        
+	        pointdessiner=true;
+		}
 	        
 	    
 	}
 	
-
+private void removePoints(Graphics g, int x1, int y1, int x2, int y2,JPanel rectPanel,Rectangle rect1) {
+	if(pointdessiner) {
+		rectangles.remove(rect1);
+		
+	}
+}
 	public void selectdraw(Graphics g,boolean status,JPanel rectPanel){
 		
 		List<Integer> listex = new LinkedList<Integer>(); 
@@ -213,7 +229,7 @@ public class Shap implements Serializable {
 			//System.out.println("dessiner");
 			dessinerPoints(g, x1, y1, x2, y2,rectPanel);
         } else {
-            //System.out.println("effacer");
+            System.out.println("effacer");
             g.setColor(Color.WHITE); 
             g.fillRect(50, 50, 50, 50);
         }

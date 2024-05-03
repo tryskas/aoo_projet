@@ -251,7 +251,12 @@ public class Graph {
        		                    	 corner = true;
        		                    	 System.out.println("1 bouge");
        		                    	 
-       		                    	 shape.move(e.getX(), e.getY());
+       		                    	int deltaX = e.getX() - startX;
+       		                    	int deltaY = e.getY() - startY;
+       		                     
+       		                    	// Déplacement de la forme en fonction du décalage
+       		                    	selectedShape1.move(deltaX, deltaY);
+       		                     
        		                    	 rectPanel.repaint();
        		                    	 
        		                    	 break;
@@ -356,6 +361,10 @@ public class Graph {
                 }
                 
                 if (btnCreatingRectangle && SwingUtilities.isLeftMouseButton(e)) {
+                    startX = e.getX();
+                    startY = e.getY();
+                }
+                if (btnInfo && SwingUtilities.isLeftMouseButton(e)) {
                     startX = e.getX();
                     startY = e.getY();
                 }
@@ -550,6 +559,7 @@ public class Graph {
 	            	 
 	            	 if((maListe.size())==0) {
 	            		 if(corner==false) {
+	            			 selectedShape1.removeRectangle();
 		            		 ajouterTexte("Rien");
 		            		 System.out.println("Aucune forme detecté");
 		            		 System.out.println(oldshape);
