@@ -34,9 +34,14 @@ public class Shap implements Serializable {
 	}
 	*/
 	public void removeRectangle() {
-		for (int i = rectangles.size() - 1; i >= rectangles.size()-7; i--) {
+		int size=rectangles.size();
+		for (int i = size - 1; i >= size-8; i--) {
+			//System.out.println("de "+rectangles.size()+"à"+(rectangles.size()-8));
+			//System.out.println(i);
 			rectangles.remove(rectangles.get(i));
 		}
+		pointdessiner=false;
+		//System.out.println("fin de remove");
 	}
 	
 	public List<Rectangle> getRectangles() {
@@ -140,6 +145,42 @@ public class Shap implements Serializable {
 	    }
 	    */
 	}
+	public void setco(int deltaX,int deltaY,boolean deltaXb,boolean deltaYb,boolean deltaWb,boolean deltaHb) {
+		int size=rectangles.size();
+		
+		
+		for (int i = size - 9; i >= 0; i--) {
+			System.out.println(" Bool : "+deltaXb +" "+deltaYb+" "+deltaWb+" "+deltaHb);
+			int dx=0,dy=0,dw = 0,dh =0;
+			int deltaW=deltaY+rectangles.get(i).getWidth();
+			int deltaH=deltaX+rectangles.get(i).getHeight();
+			if(deltaX<0) {dx=-2;}
+	        else {dx=2;}
+			if(deltaY<0) {dy=-2;}
+	        else {dy=2;}	
+			if(deltaW>0) {dw=-2;}
+	        else {dw=2;}
+			if(deltaH<0) {dh=-2;}
+	        else {dh=2;}
+			
+			//confusion dans la base donc y <=>x W<>H
+            if(deltaYb) {
+            	System.out.println("X var");
+            	rectangles.get(i).setX(rectangles.get(i).getX()+dx);}
+            if(deltaXb) {
+            	System.out.println("Y var");
+            	rectangles.get(i).setY(rectangles.get(i).getY()+dy);}
+            if(deltaWb) {
+            	System.out.println("W var");
+            	rectangles.get(i).setWidth(rectangles.get(i).getWidth()+dw);
+            	}
+            if(deltaHb) {
+            	System.out.println("H var");
+            	rectangles.get(i).setHeight(rectangles.get(i).getHeight()+dh);
+            	}
+			
+		}
+	}
 	
 	public void draw(Graphics g) {
         for (Rectangle rectangle : rectangles) {
@@ -161,23 +202,40 @@ public class Shap implements Serializable {
 	private void dessinerPoints(Graphics g, int x1, int y1, int x2, int y2,JPanel rectPanel) {
 	        //coin en haut à gauche
 		if(pointdessiner==false) {
+			
+			g.fillRect(x1-5, y1-5, 10, 10);
 			Rectangle rect1 = new Rectangle((x1-5),(y1-5),10,10);
 			addRectangle(rect1);
-	        g.fillRect(x1-5, y1-5, 10, 10);
-	        //milieu en haut
+	                
+	        
 	        g.fillRect((x1+x2)/2-5, y1-5, 10, 10);
+	        Rectangle rect2 = new Rectangle((x1+x2)/2,(y1-5),10,10);
+			addRectangle(rect2);
+			
 	        //coin en haut à droite
 	        g.fillRect(x2-5, y1-5, 10, 10);
+	        Rectangle rect3 = new Rectangle((x2-5),(y1-5),10,10);
+			addRectangle(rect3);
 	        //coin en bas à gauche
 	        g.fillRect(x1-5, y2-5, 10, 10);
+	        Rectangle rect4 = new Rectangle((x1-5),(y2-5),10,10);
+			addRectangle(rect4);
 	        //milieu en bas
 	        g.fillRect((x1+x2)/2-5, y2-5, 10, 10);
+	        Rectangle rect5 = new Rectangle((x1+x2)/2,(y2-5),10,10);
+			addRectangle(rect5);
 	        //coin en bas à droite
 	        g.fillRect(x2-5, y2-5, 10, 10);
+	        Rectangle rect6 = new Rectangle((x2-5),(y2-5),10,10);
+			addRectangle(rect6);
 	        //milieu gauche
 	        g.fillRect(x1-5, (y1+y2)/2-5, 10, 10);
+	        Rectangle rect7 = new Rectangle((x1-5),(y1+y2)/2,10,10);
+			addRectangle(rect7);
 	        //milieu droit
 	        g.fillRect(x2-5, (y1+y2)/2-5, 10, 10);
+	        Rectangle rect8 = new Rectangle((x2-5),(y1+y2)/2,10,10);
+			addRectangle(rect8);
 	        pointdessiner=true;
 		}
 	        

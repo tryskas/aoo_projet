@@ -22,9 +22,10 @@ public class Graph {
     private JFrame frame;
     private static JFrame info;	
     private JPanel rectPanel;
-    private boolean btnCreatingRectangle, btnUnion, btnInter, btnMove, btnResize, btnInfo = false;
+    private boolean btnCreatingRectangle, btnUnion, btnInter, btnMove, btnResize, btnInfo ,hold= false;
     private int startX, startY, endX, endY = -1;
     private static int IndicePanel=0;
+    Shap oldshape = null;
     private Shap selectedShape1, selectedShape2 = null, old=null;
     public List<Shap> shaps = new ArrayList<Shap>();
 	protected boolean corner;
@@ -219,7 +220,6 @@ public class Graph {
                     // Calcul du décalage par rapport à la position initiale de la souris
                     int deltaX = e.getX() - startX;
                     int deltaY = e.getY() - startY;
-                    
                     // Déplacement de la forme en fonction du décalage
                     selectedShape1.move(deltaX, deltaY);
                     
@@ -245,48 +245,71 @@ public class Graph {
        	                	
        	                	for (int i = shaps.size() - 1; i >= 0; i--) {
        		                     Shap shape = shaps.get(i);
+       		                     
+       		                     int deltaX = e.getX() - startX;
+       		                     int deltaY = e.getY() - startY;
+       		                     
+      		                     boolean dx=true,dy=true,dw = true,dh =true;
+       		                     
+       		                     
        		                     switch(shape.isTouchInfoCorner(e.getX(), e.getY())) {
        		                     
        		                     case 1:
        		                    	 corner = true;
        		                    	 System.out.println("1 bouge");
-       		                    	 
-       		                    	int deltaX = e.getX() - startX;
-       		                    	int deltaY = e.getY() - startY;
-       		                     
-       		                    	// Déplacement de la forme en fonction du décalage
-       		                    	selectedShape1.move(deltaX, deltaY);
-       		                     
+       		                    	 selectedShape1.setco(deltaX,deltaY,dx,dy,dw,dh);
        		                    	 rectPanel.repaint();
+       		                    	 hold=true;
        		                    	 
        		                    	 break;
        		                     case 2:
        		                    	 corner = true;
        		                    	 System.out.println("2");
+       		                    	selectedShape1.setco(deltaX,deltaY,dx,false,false,dh);
+      		                    	 rectPanel.repaint();
+      		                    	 hold=true;
        		                    	 break;
        		                     case 3:
        		                    	 corner = true;
        		                    	 System.out.println("3");
+       		                    	selectedShape1.setco(deltaX,deltaY,dx,false,dw,dh);
+      		                    	 rectPanel.repaint();
+      		                    	 hold=true;
        		                    	 break;
        		                     case 4:
        		                    	 corner = true;
        		                    	 System.out.println("4");
+       		                    	selectedShape1.setco(deltaX,deltaY,false,dy,dw,dh);
+      		                    	 rectPanel.repaint();
+      		                    	 hold=true;
        		                    	 break;
        		                     case 5:
        		                    	 corner = true;
        		                    	 System.out.println("5");
+       		                    	selectedShape1.setco(deltaX,deltaY,dx,false,false,dh);
+      		                    	 rectPanel.repaint();
+      		                    	 hold=true;
        		                    	 break;
        		                     case 6:
        		                    	 corner = true;
        		                    	 System.out.println("6");
+       		                    	selectedShape1.setco(deltaX,deltaY,false,false,dw,dh);
+      		                    	 rectPanel.repaint();
+      		                    	 hold=true;
        		                    	 break;
        		                     case 7:
        		                    	 corner = true;
        		                    	 System.out.println("7");
+       		                    	selectedShape1.setco(deltaX,deltaY,false,dy,dw,dh);
+      		                    	 rectPanel.repaint();
+      		                    	 hold=true;
        		                    	 break;
        		                     case 8:
        		                    	 corner = true;
        		                    	 System.out.println("8");
+       		                    	selectedShape1.setco(deltaX,deltaY,false,false,dw,false);
+      		                    	 rectPanel.repaint();
+      		                    	 hold=true;
        		                    	 break;
        		                     }
        	                	}
@@ -330,6 +353,15 @@ public class Graph {
                          endX = -1;
                          endY = -1;
                      }
+                 }
+                 else if (btnInfo) {
+                	 if(hold==true) {
+	                	 selectedShape1.removeRectangle();
+	                	 selectedShape1=null;
+	                	 rectPanel.repaint();
+	                	 hold=false;
+	                	 oldshape=null;
+                	 }
                  }
                  
                  serializeShapes("shapes.ser");
@@ -378,7 +410,7 @@ public class Graph {
         @Override
         public void mousePressed(MouseEvent e) {
         	
-        	 Shap oldshape = null;
+        	 
             
 // ---------------------------- function create cercle ----------------------------
             /* FOR CERLCE
@@ -536,7 +568,10 @@ public class Graph {
 	        	 
 	             if (SwingUtilities.isLeftMouseButton(e)) {
 	            	 int compteur=0;
+	            	 System.out.println("oldshape avant avant"+oldshape);
 	            	 if(oldshape==null) {
+	            		 System.out.println("oldshape avant "+oldshape);
+	            		 
 		            	 for (int i = shaps.size() - 1; i >= 0; i--) {
 		            		 Shap shape = shaps.get(i);
 		            		 
@@ -555,18 +590,22 @@ public class Graph {
 
 		            		 }
 		            	 }
+		            	 System.out.println("oldshape après "+oldshape);
 	            	 }
 	            	 
 	            	 if((maListe.size())==0) {
 	            		 if(corner==false) {
-	            			 selectedShape1.removeRectangle();
-		            		 ajouterTexte("Rien");
-		            		 System.out.println("Aucune forme detecté");
-		            		 System.out.println(oldshape);
-		            		 rectPanel.revalidate();
-	            			 rectPanel.repaint();
-	            			 oldshape=null;
-	            			 corner=false;
+	            			 if(selectedShape1!=null) {
+		            			 selectedShape1.removeRectangle();
+			            		 ajouterTexte("Rien");
+			            		 System.out.println("Aucune forme detecté");
+			            		 System.out.println(oldshape);
+			            		 rectPanel.revalidate();
+		            			 rectPanel.repaint();
+		            			 oldshape=null;
+		            			 corner=false;
+		            			 selectedShape1=null;
+	            			 }
 	            		 }else {
 	            			 corner=false;
 	            		 }
