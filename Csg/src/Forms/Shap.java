@@ -55,6 +55,68 @@ public class Shap implements Serializable {
 	    return false;
 	}
 	
+	public int isTouchInfoCorner(int x,int y) {
+		List<Integer> listex = new LinkedList<Integer>(); 
+		List<Integer> listey = new LinkedList<Integer>(); 
+		for (int i = rectangles.size() - 1; i >= 0; i--) {
+			Rectangle rect = rectangles.get(i);
+			
+			listex.add(rect.getX());
+			listex.add((rect.getX()+rect.getWidth()));
+			listey.add(rect.getY());
+			listey.add((rect.getY()+rect.getHeight()));
+		
+			Graph.ajouterTexte("Le maximum est: "+ Collections.max(listex)+" et "+ Collections.max(listey));
+			Graph.ajouterTexte("Le minimum est: "+ Collections.min(listex)+" et "+ Collections.min(listey));
+			int x1=Collections.min(listex);
+			int y1=Collections.min(listey);
+			int x2=Collections.max(listex);
+			int y2=Collections.max(listey);
+			
+			if (x >= x1 - 5 && x <= x1 + 5 && y >= y1 - 5 && y <= y1 + 5) {
+				System.out.println("1");
+				return 1;
+				
+			}
+			if (x >= ((x1+x2)/2) - 5 && x <= ((x1+x2)/2) + 5 && y >= y1 - 5 && y <= y1 + 5) {
+				System.out.println("2");
+				return 2;
+				
+			}
+			if (x >= x2 - 5 && x <= x2 + 5 && y >= y1 - 5 && y <= y1 + 5) {
+				System.out.println("3");
+				return 3;
+				
+			}
+			if (x >= x1 - 5 && x <= x1 + 5 && y >= y2 - 5 && y <= y2 + 5) {
+				System.out.println("4");
+				return 4;
+				
+			}
+			if (x >= (x1+x2)/2 - 5 && x <= (x1+x2)/2 + 5 && y >= y2 - 5 && y <= y2 + 5) {
+				System.out.println("5");
+				return 5;
+				
+			}
+			if (x >= x2 - 5 && x <= x2 + 5 && y >= y2 - 5 && y <= y2 + 5) {
+				System.out.println("6");
+				return 6;
+				
+			}
+			if (x >= x1 - 5 && x <= x1 + 5 && y >= (y1+y2)/2 - 5 && y <= (y1+y2)/2 + 5) {
+				System.out.println("7");
+				return 7;
+				
+			}
+			if (x >= x2 - 5 && x <= x2 + 5 && y >= (y1+y2)/2 - 5 && y <= (y1+y2)/2 + 5) {
+				System.out.println("8");
+				return 8;
+				
+			}
+		}
+		return 0;
+	}
+	
 	public int getId() {
 		return this.id;
 	}
@@ -107,22 +169,8 @@ public class Shap implements Serializable {
 	        //milieu droit
 	        g.fillRect(x2-5, (y1+y2)/2-5, 10, 10);
 	        
-	        rectPanel.addMouseListener(new MouseAdapter() {
-	            @Override
-	            public void mouseClicked(MouseEvent e) {
-	                int mouseX = e.getX();
-	                int mouseY = e.getY();
-
-	                if (mouseX >= x1 - 5 && mouseX <= x1 + 5 && mouseY >= y1 - 5 && mouseY <= y1 + 5) {
-	                    System.out.println("click souris good");
-	                    rectPanel.repaint();
-	                }
-	                
-
-	            }
-	            
-	        }
-	    );
+	        
+	    
 	}
 	
 
@@ -138,9 +186,8 @@ public class Shap implements Serializable {
 			listey.add(rect.getY());
 			listey.add((rect.getY()+rect.getHeight()));
 		}
-			System.out.println("Le maximum est: "+ Collections.max(listex)+" et "+ Collections.max(listey)); 
-			System.out.println("Le minimum est: "+ Collections.min(listex)+" et "+ Collections.min(listey)); 
-
+			Graph.ajouterTexte("Le maximum est: "+ Collections.max(listex)+" et "+ Collections.max(listey));
+			Graph.ajouterTexte("Le minimum est: "+ Collections.min(listex)+" et "+ Collections.min(listey));
 			int x1=Collections.min(listex);
 			int y1=Collections.min(listey);
 			int x2=Collections.max(listex);
@@ -163,10 +210,10 @@ public class Shap implements Serializable {
 		
 		if(status){
 			
-			System.out.println("dessiner");
+			//System.out.println("dessiner");
 			dessinerPoints(g, x1, y1, x2, y2,rectPanel);
         } else {
-            System.out.println("effacer");
+            //System.out.println("effacer");
             g.setColor(Color.WHITE); 
             g.fillRect(50, 50, 50, 50);
         }

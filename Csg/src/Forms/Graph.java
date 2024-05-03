@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.File;
@@ -21,12 +20,14 @@ import java.util.List;
 public class Graph {
 
     private JFrame frame;
-    private JFrame info;	
+    private static JFrame info;	
     private JPanel rectPanel;
     private boolean btnCreatingRectangle, btnUnion, btnInter, btnMove, btnResize, btnInfo = false;
     private int startX, startY, endX, endY = -1;
+    private static int IndicePanel=0;
     private Shap selectedShape1, selectedShape2 = null, old=null;
     public List<Shap> shaps = new ArrayList<Shap>();
+	protected boolean corner;
 
     public Graph() {
     	
@@ -52,20 +53,6 @@ public class Graph {
         }
 
         initialize();
-    }
-    
-    private ImageIcon resizeImageIcon(String imagePath) {
-        try {
-        	int width = 30;
-        	int height = 30;
-            ImageIcon originalIcon = new ImageIcon(imagePath);
-            Image originalImage = originalIcon.getImage();
-            Image resizedImage = originalImage.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            return new ImageIcon(resizedImage);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
     }
     
     private void initialize() {
@@ -100,7 +87,7 @@ public class Graph {
         
 // ---------------------------- btn create rectangle ----------------------------
                 
-        JButton creatRectBtn = new JButton(resizeImageIcon("Ressources/rectangle.png"));
+        JButton creatRectBtn = new JButton("create");
         creatRectBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -127,7 +114,7 @@ public class Graph {
         toolBar.add(creatCercBtn);
         */
 // ---------------------------- btn resize ----------------------------
-     JButton resizeBtn = new JButton(resizeImageIcon("Ressources/resize.png"));
+     JButton resizeBtn = new JButton("resize");
 
      resizeBtn.addActionListener(new ActionListener() {
          @Override
@@ -140,9 +127,8 @@ public class Graph {
      });
      toolBar.add(resizeBtn);
 // ---------------------------- btn resize ----------------------------
-     
 // --------------------------------- btn Union ---------------------------------
-        JButton unionBtn = new JButton(resizeImageIcon("Ressources/union.png"));
+        JButton unionBtn = new JButton("union");
 
         unionBtn.addActionListener(new ActionListener() {
         	@Override
@@ -157,7 +143,7 @@ public class Graph {
 // --------------------------------- btn Union ---------------------------------
 
 // --------------------------------- btn Inter ---------------------------------
-        JButton interBtn = new JButton(resizeImageIcon("Ressources/inter.png"));
+        JButton interBtn = new JButton("inter");
 
         interBtn.addActionListener(new ActionListener() {
         	@Override
@@ -172,7 +158,7 @@ public class Graph {
 // --------------------------------- btn Inter ---------------------------------
         
 // --------------------------------- btn Move ---------------------------------
-        JButton moveBtn = new JButton(resizeImageIcon("Ressources/move.jpeg"));
+        JButton moveBtn = new JButton("move");
 
         moveBtn.addActionListener(new ActionListener() {
             @Override
@@ -187,7 +173,7 @@ public class Graph {
 // --------------------------------- btn Move ---------------------------------
         
 // --------------------------------- btn Save ---------------------------------
-        JButton saveBtn = new JButton(resizeImageIcon("Ressources/save.png"));
+        JButton saveBtn = new JButton("save");
 
         saveBtn.addActionListener(new ActionListener() {
             @Override
@@ -252,8 +238,62 @@ public class Graph {
                         }
                     }
                 }
+        
+                else if (btnInfo && selectedShape1 != null) {
+       	        		 if (SwingUtilities.isLeftMouseButton(e)) {
+       	                	//System.out.println("test corner activé");
+       	                	
+       	                	for (int i = shaps.size() - 1; i >= 0; i--) {
+       		                     Shap shape = shaps.get(i);
+       		                     switch(shape.isTouchInfoCorner(e.getX(), e.getY())) {
+       		                     
+       		                     case 1:
+       		                    	 corner = true;
+       		                    	 System.out.println("1 bouge");
+       		                    	 
+       		                    	 shape.move(e.getX(), e.getY());
+       		                    	 rectPanel.repaint();
+       		                    	 
+       		                    	 break;
+       		                     case 2:
+       		                    	 corner = true;
+       		                    	 System.out.println("2");
+       		                    	 break;
+       		                     case 3:
+       		                    	 corner = true;
+       		                    	 System.out.println("3");
+       		                    	 break;
+       		                     case 4:
+       		                    	 corner = true;
+       		                    	 System.out.println("4");
+       		                    	 break;
+       		                     case 5:
+       		                    	 corner = true;
+       		                    	 System.out.println("5");
+       		                    	 break;
+       		                     case 6:
+       		                    	 corner = true;
+       		                    	 System.out.println("6");
+       		                    	 break;
+       		                     case 7:
+       		                    	 corner = true;
+       		                    	 System.out.println("7");
+       		                    	 break;
+       		                     case 8:
+       		                    	 corner = true;
+       		                    	 System.out.println("8");
+       		                    	 break;
+       		                     }
+       	                	}
+       	                	
+       	                }
+                	}
             }
         });
+                
+                
+            
+ 
 // ================================= Mouse Dragged =================================
 
 // ================================= Mouse Relaese =================================
@@ -316,7 +356,6 @@ public class Graph {
                 }
                 
                 if (btnCreatingRectangle && SwingUtilities.isLeftMouseButton(e)) {
-                	System.err.println("Creating a rectangle");
                     startX = e.getX();
                     startY = e.getY();
                 }
@@ -439,6 +478,52 @@ public class Graph {
 //--------------------------------- function info ----------------------------------
 	         else if (btnInfo) {
 	        	 List<Object> maListe = new ArrayList<>();
+	        	 if (btnInfo && selectedShape1 != null) {
+   	        		 if (SwingUtilities.isLeftMouseButton(e)) {
+   	        			
+	   	                	//System.out.println("test corner activé");
+	   	                	
+	   	                	for (int i = shaps.size() - 1; i >= 0; i--) {
+	   		                     Shap shape = shaps.get(i);
+	   		                     switch(shape.isTouchInfoCorner(e.getX(), e.getY())) {
+	   		                     case 1:
+	   		                    	 corner = true;
+	   		                    	 System.out.println("1");
+	   		                    	 break;
+	   		                     case 2:
+	   		                    	 corner = true;
+	   		                    	 System.out.println("2");
+	   		                    	 break;
+	   		                     case 3:
+	   		                    	 corner = true;
+	   		                    	 System.out.println("3");
+	   		                    	 break;
+	   		                     case 4:
+	   		                    	 corner = true;
+	   		                    	 System.out.println("4");
+	   		                    	 break;
+	   		                     case 5:
+	   		                    	 corner = true;
+	   		                    	 System.out.println("5");
+	   		                    	 break;
+	   		                     case 6:
+	   		                    	 corner = true;
+	   		                    	 System.out.println("6");
+	   		                    	 break;
+	   		                     case 7:
+	   		                    	 corner = true;
+	   		                    	 System.out.println("7");
+	   		                    	 break;
+	   		                     case 8:
+	   		                    	 corner = true;
+	   		                    	 System.out.println("8");
+	   		                    	 break;
+	   		                     }
+	   	                	}
+	   	                	
+   	        			}
+   	        		 
+	        	 }
 	        	 
 	             if (SwingUtilities.isLeftMouseButton(e)) {
 	            	 int compteur=0;
@@ -451,7 +536,7 @@ public class Graph {
 			            			 ajouterTexte(shape.toString());
 			            		 }
 		            			 selectedShape1 = shape;
-		            			 System.err.println(shape);
+		            			 //System.err.println(shape);
 		            			 maListe.add(selectedShape1);
 		            			 
 		            			 oldshape= shape;
@@ -464,14 +549,17 @@ public class Graph {
 	            	 }
 	            	 
 	            	 if((maListe.size())==0) {
-	            		 
-	            		 ajouterTexte("Rien");
-	            		 System.out.println("Aucune forme detecté");
-	            		 System.out.println(oldshape);
-	            		 rectPanel.revalidate();
-            			 rectPanel.repaint();
-            			 oldshape=null;
-	            		
+	            		 if(corner==false) {
+		            		 ajouterTexte("Rien");
+		            		 System.out.println("Aucune forme detecté");
+		            		 System.out.println(oldshape);
+		            		 rectPanel.revalidate();
+	            			 rectPanel.repaint();
+	            			 oldshape=null;
+	            			 corner=false;
+	            		 }else {
+	            			 corner=false;
+	            		 }
 	            	 }
 	             }
 	         }
@@ -487,6 +575,7 @@ public class Graph {
     	this.btnInter = false;
     	this.btnUnion = false;
     	this.btnMove = false;
+    	this.btnResize = false;
     	this.startX = -1;
     	this.startY = -1;
     	this.endX = -1;
@@ -569,15 +658,32 @@ public class Graph {
     	}
     }
     
-    private void ajouterTexte(String texte) {
-    	if(info!=null) {
-    		info.getContentPane().removeAll();
-    		System.out.println("écriture en cours");
-    		JLabel label = new JLabel(texte);
-            this.info.add(label);
-            info.revalidate();
-            info.repaint();
-    	}
+    public static void ajouterTexte(String texte) {
+        if (info != null) {
+            JTextArea textArea = null;
+            for (Component component : info.getContentPane().getComponents()) {
+                if (component instanceof JTextArea) {
+                    textArea = (JTextArea) component;
+                    break;
+                }
+            }
+
+            if (textArea == null) {
+                textArea = new JTextArea();
+                info.add(textArea);
+            }
+            
+            if (IndicePanel==10) {
+            	IndicePanel=0;
+            	info.getContentPane().removeAll();
+                info.revalidate();
+                info.repaint();
+            }else{
+            	IndicePanel=IndicePanel+1;
+	            textArea.append(texte + "\n");
+
+            }
+        }
     }
    
     public static void main(String[] args) {
