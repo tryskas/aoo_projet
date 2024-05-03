@@ -150,6 +150,7 @@ public class Shap implements Serializable {
 		
 		
 		for (int i = size - 9; i >= 0; i--) {
+			System.out.println("rectangle n°"+i);
 			System.out.println(" Bool : "+deltaXb +" "+deltaYb+" "+deltaWb+" "+deltaHb);
 			int dx=0,dy=0,dw = 0,dh =0;
 			int deltaW=deltaY+rectangles.get(i).getWidth();

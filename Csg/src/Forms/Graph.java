@@ -286,7 +286,7 @@ public class Graph {
        		                     case 5:
        		                    	 corner = true;
        		                    	 System.out.println("5");
-       		                    	selectedShape1.setco(deltaX,deltaY,dx,false,false,dh);
+       		                    	selectedShape1.setco(deltaX,deltaY,false,false,false,dh);
       		                    	 rectPanel.repaint();
       		                    	 hold=true;
        		                    	 break;
