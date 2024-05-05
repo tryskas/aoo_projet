@@ -232,17 +232,9 @@ public class Graph {
        	        			 hold=true;
        	                	//System.out.println("test corner activé");
        	                	
-       	                	
-							   
-							     
-							   int deltaX = e.getX() - startX;
-							   int deltaY = e.getY() - startY;
-							     
-							   
-							    
-							   selection = selectedShape1.isTouchInfoCorner(e.getX(), e.getY(),nbrRectCreer,selection);
-							   System.out.println("selectino = " +selection);
-							   System.out.println("SS "+selectedShape1.getId()+" "+selectedShape1+"");
+							   selection = selectedShape1.isTouchInfoCorner(e.getX(), e.getY(),false,selection);
+							   //System.out.println("selectino = " +selection);
+							   //System.out.println("SS "+selectedShape1.getId()+" "+selectedShape1+"");
 							   selectedShape1.setco(selection,e.getX(),e.getY());
 							   rectPanel.repaint();
        	                	
@@ -435,25 +427,24 @@ public class Graph {
             
 //--------------------------------- function info ----------------------------------
 	         else if (btnInfo) {
-	        		List<Object> maListe = new ArrayList<>();
 	        		if (btnInfo) {
 	        			if (SwingUtilities.isLeftMouseButton(e)) {
 	        				//System.out.println("test corner activé");
 	        				for (int i = shaps.size() - 1; i >= 0; i--) {
 	        						Shap shape = shaps.get(i);
-	        						System.out.println("ITERATION NUMERO "+i);
-	        						System.out.println("nbr rect créer = "+nbrRectCreer);
+	        						//System.out.println("ITERATION NUMERO "+i);
+	        						//System.out.println("nbr rect créer = "+nbrRectCreer);
 	        						boolean verification=shape.isTouch(e.getX(), e.getY());
-	        						int verificationcorner=shape.isTouchInfoCorner(e.getX(), e.getY(),nbrRectCreer,selection);
+	        						int verificationcorner=shape.isTouchInfoCorner(e.getX(), e.getY(),true,selection);
 	        						//System.out.println("verif = "+verification);
-	        						System.out.println("verifcorner = "+verificationcorner);
-	        						System.out.println("oldshape : "+oldshape);
-	        						System.out.println("selectedshape : "+selectedShape1);
+	        						//System.out.println("verifcorner = "+verificationcorner);
+	        						//System.out.println("oldshape : "+oldshape);
+	        						//System.out.println("selectedshape : "+selectedShape1);
 	        						
 	        						if(oldshape==null) {
 	        							if(selectedShape1==null){
 	        								if(verification) {
-		        								System.out.println("figure existe");
+		        								//System.out.println("figure existe");
 		        								oldshape= selectedShape1;
 		        								selectedShape1 = shape;
 		        								ajouterTexte(shape.toString());
@@ -465,16 +456,16 @@ public class Graph {
 		        							}
 	        							}else {
 	        								if(verificationcorner>0) {
-		        								System.out.println("corner");
+		        								//System.out.println("corner");
 		        							}else {
-		        								System.out.println("pas de corner = rien ");
+		        								//System.out.println("pas de corner = rien ");
 		        								if(verification==true){
 		        									resetselectinfo();
 		        									break;
 		        								}else {
-		        									selectedShape1=null;
-		        									System.out.println("JE SUIS ALA");
 		        									
+		        									//System.out.println("JE SUIS ALA");
+		        									resetselectinfo();
 		        									break;
 		        								}
 		        							}
@@ -484,7 +475,7 @@ public class Graph {
 	        								selectedShape1=null;
 	        								oldshape=null;
 	        							}else {
-	        								System.out.println("figure existe");
+	        								//System.out.println("figure existe");
 	        								oldshape= null;
 	        								selectedShape1 = shape;
 	        								ajouterTexte(shape.toString());
@@ -502,7 +493,7 @@ public class Graph {
     };
 // ================================= Click Mouse =====================================
     public void resetselectinfo() {
-		System.out.println("reset");
+		//System.out.println("reset");
     	selectedShape1.removeRectangle();
 		rectPanel.repaint();
 		oldshape=selectedShape1;
