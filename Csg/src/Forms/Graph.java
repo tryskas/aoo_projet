@@ -20,12 +20,16 @@ import java.util.List;
 public class Graph {
 
     private JFrame frame;
-    private JFrame info;	
+    private static JFrame info;	
     private JPanel rectPanel;
-    private boolean btnCreatingRectangle, btnUnion, btnInter, btnMove, btnResize, btnInfo = false;
+    private boolean btnCreatingRectangle, btnUnion, btnInter, btnMove, btnInfo ,hold= false;
     private int startX, startY, endX, endY = -1;
+    private int nbrRectCreer,selection=0;
+    private static int IndicePanel=0;
+    Shap oldshape = null;
     private Shap selectedShape1, selectedShape2 = null, old=null;
     public List<Shap> shaps = new ArrayList<Shap>();
+	protected boolean corner;
 
     public Graph() {
     	
@@ -111,20 +115,7 @@ public class Graph {
         });
         toolBar.add(creatCercBtn);
         */
-// ---------------------------- btn resize ----------------------------
-     JButton resizeBtn = new JButton("resize");
 
-     resizeBtn.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-             resetBool();
-             btnResize = true;
-             rectPanel.removeMouseListener(mouseListener);
-             rectPanel.addMouseListener(mouseListener);
-         }
-     });
-     toolBar.add(resizeBtn);
-// ---------------------------- btn resize ----------------------------
 // --------------------------------- btn Union ---------------------------------
         JButton unionBtn = new JButton("union");
 
@@ -217,7 +208,6 @@ public class Graph {
                     // Calcul du décalage par rapport à la position initiale de la souris
                     int deltaX = e.getX() - startX;
                     int deltaY = e.getY() - startY;
-                    
                     // Déplacement de la forme en fonction du décalage
                     selectedShape1.move(deltaX, deltaY);
                     
@@ -236,14 +226,40 @@ public class Graph {
                         }
                     }
                 }
+        
+                else if (btnInfo && selectedShape1 != null) {
+       	        		 if (SwingUtilities.isLeftMouseButton(e)) {
+       	        			 hold=true;
+       	                	//System.out.println("test corner activé");
+							   int deltaX = e.getX() - startX;
+							   int deltaY = e.getY() - startY;
+							   selection = selectedShape1.isTouchInfoCorner(e.getX(), e.getY(),nbrRectCreer,selection);
+							   System.out.println("selectino = " +selection);
+							   System.out.println("SS "+selectedShape1.getId()+" "+selectedShape1+"");
+							   selectedShape1.setco(selection,deltaX,deltaY);
+							   
+							   startX = e.getX();
+			                   startY = e.getY();
+			                   
+							   rectPanel.repaint();
+       	                	
+       	                }
+                
+                }
             }
         });
+                
+                
+            
+ 
 // ================================= Mouse Dragged =================================
 
 // ================================= Mouse Relaese =================================
 
         rectPanel.addMouseListener(new MouseAdapter() {
-        	 @Override
+        	
+
+			@Override
              public void mouseReleased(MouseEvent e) {
                  if (btnMove) {
                      selectedShape1 = null;
@@ -255,7 +271,6 @@ public class Graph {
                      if (startX != -1 && startY != -1) {
                          endX = e.getX();
                          endY = e.getY();
-                         btnCreatingRectangle = false;
                           
                         // Ajouter le rectangle à la liste et redessiner le panneau
                          Shap shap = new Shap();
@@ -268,7 +283,18 @@ public class Graph {
                          startY = -1;
                          endX = -1;
                          endY = -1;
+                         nbrRectCreer=nbrRectCreer+1;
+                         
                      }
+                 }
+                 else if (btnInfo) {
+                	 if(hold==true) {
+	                	 selectedShape1.removeRectangle();
+	                	 selectedShape1=null;
+	                	 rectPanel.repaint();
+	                	 hold=false;
+	                	 oldshape=null;
+                	 }
                  }
                  
                  serializeShapes("shapes.ser");
@@ -300,7 +326,10 @@ public class Graph {
                 }
                 
                 if (btnCreatingRectangle && SwingUtilities.isLeftMouseButton(e)) {
-                	System.err.println("Creating a rectangle");
+                    startX = e.getX();
+                    startY = e.getY();
+                }
+                if (btnInfo && SwingUtilities.isLeftMouseButton(e)) {
                     startX = e.getX();
                     startY = e.getY();
                 }
@@ -314,7 +343,7 @@ public class Graph {
         @Override
         public void mousePressed(MouseEvent e) {
         	
-        	 Shap oldshape = null;
+        	 
             
 // ---------------------------- function create cercle ----------------------------
             /* FOR CERLCE
@@ -397,87 +426,101 @@ public class Graph {
             }
 // --------------------------------- function Inter ----------------------------------
 
-// --------------------------------- function Resize ----------------------------------
-	         else if (btnResize) {
-	             if (SwingUtilities.isLeftMouseButton(e)) {
-	                 
-	                 for (int i = shaps.size() - 1; i >= 0; i--) {
-	                     Shap shape = shaps.get(i);
-	                     if (shape.isTouch(e.getX(), e.getY())) {
-	                         selectedShape1 = shape;
-	                         System.err.println("Resize");
-	                         System.err.println("Selected id= " + shape.getId());
-	                         for (Rectangle rect : shape.getRectangles()) {
-	                             System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
-	                         }
-	                         //rectPanel.repaint();
-	                         //serializeShapes("shapes.ser");
-	                         System.err.println("test :");
-	                         break;
-	                     }
-	                 }
-	             }
-	         }
-//--------------------------------- function Resize ----------------------------------
             
 //--------------------------------- function info ----------------------------------
 	         else if (btnInfo) {
-	        	 List<Object> maListe = new ArrayList<>();
-	        	 
-	             if (SwingUtilities.isLeftMouseButton(e)) {
-	            	 int compteur=0;
-	            	 if(oldshape==null) {
-		            	 for (int i = shaps.size() - 1; i >= 0; i--) {
-		            		 Shap shape = shaps.get(i);
-		            		 
-		            		 if (shape.isTouch(e.getX(), e.getY())) {
-		            			 if(shape!=null) {
-			            			 ajouterTexte(shape.toString());
-			            		 }
-		            			 selectedShape1 = shape;
-		            			 System.err.println(shape);
-		            			 maListe.add(selectedShape1);
-		            			 
-		            			 oldshape= shape;
-		            			 
-		            			 Graphics g = rectPanel.getGraphics();
-		                         shape.selectdraw(g,true,rectPanel);
-
-		            		 }
-		            	 }
-	            	 }
-	            	 
-	            	 if((maListe.size())==0) {
-	            		 
-	            		 ajouterTexte("Rien");
-	            		 System.out.println("Aucune forme detecté");
-	            		 System.out.println(oldshape);
-	            		 rectPanel.revalidate();
-            			 rectPanel.repaint();
-            			 oldshape=null;
-	            		
-	            	 }
-	             }
-	         }
-	         
+	        		List<Object> maListe = new ArrayList<>();
+	        		if (btnInfo) {
+	        			if (SwingUtilities.isLeftMouseButton(e)) {
+	        				//System.out.println("test corner activé");
+	        				for (int i = shaps.size() - 1; i >= 0; i--) {
+	        						Shap shape = shaps.get(i);
+	        						System.out.println("ITERATION NUMERO "+i);
+	        						System.out.println("nbr rect créer = "+nbrRectCreer);
+	        						boolean verification=shape.isTouch(e.getX(), e.getY());
+	        						int verificationcorner=shape.isTouchInfoCorner(e.getX(), e.getY(),nbrRectCreer,selection);
+	        						//System.out.println("verif = "+verification);
+	        						System.out.println("verifcorner = "+verificationcorner);
+	        						System.out.println("oldshape : "+oldshape);
+	        						System.out.println("selectedshape : "+selectedShape1);
+	        						
+	        						if(oldshape==null) {
+	        							if(selectedShape1==null){
+	        								if(verification) {
+		        								System.out.println("figure existe");
+		        								oldshape= selectedShape1;
+		        								selectedShape1 = shape;
+		        								ajouterTexte(shape.toString());
+		        								Graphics g = rectPanel.getGraphics();
+		        								shape.selectdraw(g,true,rectPanel);
+		        								break;
+		        							}else {
+		        								
+		        							}
+	        							}else {
+	        								if(verificationcorner>0) {
+		        								System.out.println("corner");
+		        							}else {
+		        								System.out.println("pas de corner = rien ");
+		        								if(verification==true){
+		        									resetselectinfo();
+		        									break;
+		        								}else {
+		        									selectedShape1=null;
+		        									System.out.println("JE SUIS ALA");
+		        									
+		        									break;
+		        								}
+		        							}
+	        							}
+	        						}else {
+	        							if(selectedShape1==oldshape){
+	        								selectedShape1=null;
+	        								oldshape=null;
+	        							}else {
+	        								System.out.println("figure existe");
+	        								oldshape= null;
+	        								selectedShape1 = shape;
+	        								ajouterTexte(shape.toString());
+	        								Graphics g = rectPanel.getGraphics();
+	        								shape.selectdraw(g,true,rectPanel);
+	        								break;
+	        							}
+	        						}	
+	        					}
+	        				}
+	        			}
+	        	}
 //--------------------------------- function info ----------------------------------
         }
     };
 // ================================= Click Mouse =====================================
-    
+    public void resetselectinfo() {
+		System.out.println("reset");
+    	selectedShape1.removeRectangle();
+		rectPanel.repaint();
+		oldshape=selectedShape1;
+		corner=false;
+		selectedShape1=null;
+		oldshape=null;
+    }
     public void resetBool() {
     	this.btnCreatingRectangle = false;
     	//this.btnCreatingCercle = false;
     	this.btnInter = false;
     	this.btnUnion = false;
     	this.btnMove = false;
+    	
     	this.startX = -1;
     	this.startY = -1;
     	this.endX = -1;
     	this.endY = -1;
-    	this.selectedShape1=null;
+    	
     	this.selectedShape2=null;
     	this.old=null;
+    	
+    	this.btnInfo = false;
+    	this.selectedShape1=null;
     }
     
     public void serializeShapes(String filename) {
@@ -553,15 +596,32 @@ public class Graph {
     	}
     }
     
-    private void ajouterTexte(String texte) {
-    	if(info!=null) {
-    		info.getContentPane().removeAll();
-    		System.out.println("écriture en cours");
-    		JLabel label = new JLabel(texte);
-            this.info.add(label);
-            info.revalidate();
-            info.repaint();
-    	}
+    public static void ajouterTexte(String texte) {
+        if (info != null) {
+            JTextArea textArea = null;
+            for (Component component : info.getContentPane().getComponents()) {
+                if (component instanceof JTextArea) {
+                    textArea = (JTextArea) component;
+                    break;
+                }
+            }
+
+            if (textArea == null) {
+                textArea = new JTextArea();
+                info.add(textArea);
+            }
+            
+            if (IndicePanel==10) {
+            	IndicePanel=0;
+            	info.getContentPane().removeAll();
+                info.revalidate();
+                info.repaint();
+            }else{
+            	IndicePanel=IndicePanel+1;
+	            textArea.append(texte + "\n");
+
+            }
+        }
     }
    
     public static void main(String[] args) {
