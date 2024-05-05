@@ -169,7 +169,7 @@ public class Graph {
                for (Shap shap : shaps) {
                    shap.draw(g);
                }
-               if (btnCreatingRectangle && startX != -1 && startY != -1) {
+              . if (btnCreatingRectangle && startX != -1 && startY != -1) {
             	    int width = Math.abs(endX - startX);
             	    int height = Math.abs(endY - startY);
             	    int x = Math.min(startX, endX);
