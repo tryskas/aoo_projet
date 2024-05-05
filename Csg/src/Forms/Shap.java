@@ -1,8 +1,6 @@
 package Forms;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -12,10 +10,10 @@ import javax.swing.JPanel;
 import java.io.Serializable;
 
 public class Shap implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private static int nextId = 1;
     private int id;
-    private boolean pointdessiner=false; 
-	private List<Rectangle> rectangles;
+    private List<Rectangle> rectangles;
 	
 	public Shap() {
 		id = nextId;
@@ -31,7 +29,6 @@ public class Shap implements Serializable {
 		for (int i = size - 1; i >= size-8; i--) {
 			rectangles.remove(rectangles.get(i));
 		}
-		pointdessiner=false;
 	}
 	
 	public List<Rectangle> getRectangles() {
@@ -47,8 +44,6 @@ public class Shap implements Serializable {
 	}
 	
 	public int isTouchInfoCorner(int x,int y,int nbrRectCreer,int last) {
-		List<Integer> listex = new LinkedList<Integer>(); 
-		List<Integer> listey = new LinkedList<Integer>(); 
 		int realsize=rectangles.size() -1;
 		for (int i = rectangles.size()-1; i >= 0; i--) {
 			Rectangle rect = rectangles.get(i);
@@ -158,11 +153,6 @@ public class Shap implements Serializable {
             g.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
         }
     }
-	private boolean dessinerPoints = false;
-	public void setDessinerPoints(boolean dessiner) {
-
-	    this.dessinerPoints = dessiner;
-	}
 	private void dessinerPoints(Graphics g, int x1, int y1, int x2, int y2,JPanel rectPanel) {
 	        //coin en haut à gauche
 		
@@ -200,7 +190,6 @@ public class Shap implements Serializable {
 	        g.fillRect(x2-5, (y1+y2)/2-5, 10, 10);
 	        Rectangle rect8 = new Rectangle((x2-5),(y1+y2)/2-5,10,10);
 			addRectangle(rect8);
-	        pointdessiner=true;
 	}
 	
 

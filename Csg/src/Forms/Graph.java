@@ -9,9 +9,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.io.File;
-import javax.imageio.ImageIO;
-
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +24,7 @@ public class Graph {
     private int nbrRectCreer,selection=0;
     private static int IndicePanel=0;
     Shap oldshape = null;
-    private Shap selectedShape1, selectedShape2 = null, old=null;
+    private Shap selectedShape1, selectedShape2 = null;
     public List<Shap> shaps = new ArrayList<Shap>();
 	protected boolean corner;
 
@@ -374,7 +371,6 @@ public class Graph {
             
 //--------------------------------- function info ----------------------------------
 	         else if (btnInfo) {
-	        		List<Object> maListe = new ArrayList<>();
 	        		if (btnInfo) {
 	        			if (SwingUtilities.isLeftMouseButton(e)) {
 	        				for (int i = shaps.size() - 1; i >= 0; i--) {
@@ -446,8 +442,6 @@ public class Graph {
     	this.endY = -1;
     	
     	this.selectedShape2=null;
-    	this.old=null;
-    	
     	this.btnInfo = false;
     	this.selectedShape1=null;
     }
