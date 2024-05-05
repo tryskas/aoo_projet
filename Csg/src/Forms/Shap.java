@@ -37,7 +37,7 @@ public class Shap implements Serializable {
 		int size=rectangles.size();
 		for (int i = size - 1; i >= size-8; i--) {
 			//System.out.println("de "+rectangles.size()+"à"+(rectangles.size()-8));
-			//System.out.println(i);
+			//System.out.println("remove de "+i);
 			rectangles.remove(rectangles.get(i));
 		}
 		pointdessiner=false;
@@ -67,66 +67,44 @@ public class Shap implements Serializable {
 	    return false;
 	}
 	
-	public int isTouchInfoCorner(int x,int y) {
+	public int isTouchInfoCorner(int x,int y,int nbrRectCreer,int last) {
 		List<Integer> listex = new LinkedList<Integer>(); 
 		List<Integer> listey = new LinkedList<Integer>(); 
-		for (int i = rectangles.size() - 1; i >= 0; i--) {
+		System.out.println("info corner : "+rectangles.size()+" "+ nbrRectCreer);
+		int realsize=rectangles.size() -1;
+		System.out.println("realsize :"+realsize);
+		for (int i = rectangles.size()-1; i >= 0; i--) {
 			Rectangle rect = rectangles.get(i);
-			
-			listex.add(rect.getX());
-			listex.add((rect.getX()+rect.getWidth()));
-			listey.add(rect.getY());
-			listey.add((rect.getY()+rect.getHeight()));
-		
-			Graph.ajouterTexte("Le maximum est: "+ Collections.max(listex)+" et "+ Collections.max(listey));
-			Graph.ajouterTexte("Le minimum est: "+ Collections.min(listex)+" et "+ Collections.min(listey));
-			int x1=Collections.min(listex);
-			int y1=Collections.min(listey);
-			int x2=Collections.max(listex);
-			int y2=Collections.max(listey);
-			
-			if (x >= x1 - 5 && x <= x1 + 5 && y >= y1 - 5 && y <= y1 + 5) {
-				System.out.println("1");
-				return 1;
+			System.out.println("max ="+realsize+"il parcour le "+i+" contenu "+rect.contains(x,y));
+			if(rect.contains(x,y)) {
 				
-			}
-			if (x >= ((x1+x2)/2) - 5 && x <= ((x1+x2)/2) + 5 && y >= y1 - 5 && y <= y1 + 5) {
-				System.out.println("2");
-				return 2;
-				
-			}
-			if (x >= x2 - 5 && x <= x2 + 5 && y >= y1 - 5 && y <= y1 + 5) {
-				System.out.println("3");
-				return 3;
-				
-			}
-			if (x >= x1 - 5 && x <= x1 + 5 && y >= y2 - 5 && y <= y2 + 5) {
-				System.out.println("4");
-				return 4;
-				
-			}
-			if (x >= (x1+x2)/2 - 5 && x <= (x1+x2)/2 + 5 && y >= y2 - 5 && y <= y2 + 5) {
-				System.out.println("5");
-				return 5;
-				
-			}
-			if (x >= x2 - 5 && x <= x2 + 5 && y >= y2 - 5 && y <= y2 + 5) {
-				System.out.println("6");
-				return 6;
-				
-			}
-			if (x >= x1 - 5 && x <= x1 + 5 && y >= (y1+y2)/2 - 5 && y <= (y1+y2)/2 + 5) {
-				System.out.println("7");
-				return 7;
-				
-			}
-			if (x >= x2 - 5 && x <= x2 + 5 && y >= (y1+y2)/2 - 5 && y <= (y1+y2)/2 + 5) {
-				System.out.println("8");
-				return 8;
-				
+				if(i==realsize) {
+					return 8;
+				}
+				if(i==realsize-1) {
+					return 7;
+				}
+				if(i==realsize-2) {
+					return 6;
+				}
+				if(i==realsize-3) {
+					return 5;
+				}
+				if(i==realsize-4) {
+					return 4;
+				}
+				if(i==realsize-5) {
+					return 3;
+				}
+				if(i==realsize-6) {
+					return 2;
+				}
+				if(i==realsize-7) {
+					return 1;
+				}
 			}
 		}
-		return 0;
+		return last;
 	}
 	
 	public int getId() {
@@ -145,41 +123,68 @@ public class Shap implements Serializable {
 	    }
 	    */
 	}
-	public void setco(int deltaX,int deltaY,boolean deltaXb,boolean deltaYb,boolean deltaWb,boolean deltaHb) {
+	public void setco(int selection,int curseur_x,int curseur_y) {
 		int size=rectangles.size();
 		
 		
 		for (int i = size - 9; i >= 0; i--) {
+			Rectangle rect=rectangles.get(i);
 			System.out.println("rectangle n°"+i);
-			System.out.println(" Bool : "+deltaXb +" "+deltaYb+" "+deltaWb+" "+deltaHb);
-			int dx=0,dy=0,dw = 0,dh =0;
-			int deltaW=deltaY+rectangles.get(i).getWidth();
-			int deltaH=deltaX+rectangles.get(i).getHeight();
-			if(deltaX<0) {dx=-2;}
-	        else {dx=2;}
-			if(deltaY<0) {dy=-2;}
-	        else {dy=2;}	
-			if(deltaW>0) {dw=-2;}
-	        else {dw=2;}
-			if(deltaH<0) {dh=-2;}
-	        else {dh=2;}
+			System.out.println(" valeurs : "+selection +" "+curseur_x+" "+curseur_y);
 			
-			//confusion dans la base donc y <=>x W<>H
-            if(deltaYb) {
-            	System.out.println("X var");
-            	rectangles.get(i).setX(rectangles.get(i).getX()+dx);}
-            if(deltaXb) {
-            	System.out.println("Y var");
-            	rectangles.get(i).setY(rectangles.get(i).getY()+dy);}
-            if(deltaWb) {
-            	System.out.println("W var");
-            	rectangles.get(i).setWidth(rectangles.get(i).getWidth()+dw);
-            	}
-            if(deltaHb) {
-            	System.out.println("H var");
-            	rectangles.get(i).setHeight(rectangles.get(i).getHeight()+dh);
-            	}
-			
+			//selection=40;		
+			switch(selection) {
+			case 1:
+				
+				rect.setWidth(rectangles.get(i).getWidth()+(rectangles.get(i).getX()-curseur_x));
+				rect.setHeight(rectangles.get(i).getHeight()+(rectangles.get(i).getY()-curseur_y));
+				rect.setX(curseur_x);
+				rect.setY(curseur_y);
+				selection=1;
+				break;
+			case 2:
+				
+				rect.setHeight(rectangles.get(i).getHeight()+(rectangles.get(i).getY()-curseur_y));
+				rect.setY(curseur_y);
+				selection=2;
+				break;
+			case 3:
+				//rectangles.get(i).setX(curseur_x-rectangles.get(i).getWidth());
+				rect.setWidth(curseur_x-rectangles.get(i).getX());
+				rect.setHeight(rectangles.get(i).getHeight()+(rectangles.get(i).getY()-curseur_y));
+				rectangles.get(i).setY(curseur_y);
+				selection=3;
+				break;
+			case 4:
+				
+				//rectangles.get(i).setY(curseur_y-rectangles.get(i).getHeight());
+				rect.setWidth(rectangles.get(i).getWidth()+(rectangles.get(i).getX()-curseur_x));
+				rect.setHeight((curseur_y-rectangles.get(i).getY()));
+				rect.setX(curseur_x);
+				selection=1;
+				break;
+			case 5:
+				rect.setHeight((curseur_y-rectangles.get(i).getY()));
+				selection=5;
+				break;
+			case 6:
+				//rectangles.get(i).setX(curseur_x-rectangles.get(i).getWidth());
+				//rectangles.get(i).setY(curseur_y-rectangles.get(i).getHeight());
+				rect.setWidth(curseur_x-(rectangles.get(i).getX()));
+				rect.setHeight((curseur_y-rectangles.get(i).getY()));
+				selection=6;
+				break;
+			case 7:
+				
+				rect.setWidth(rectangles.get(i).getWidth()+(rectangles.get(i).getX()-curseur_x));
+				rect.setX(curseur_x);
+				selection=7;
+				break;
+			case 8:
+				rect.setWidth(curseur_x-rectangles.get(i).getX());
+				selection=8;
+				break;
+			}
 		}
 	}
 	
@@ -202,15 +207,15 @@ public class Shap implements Serializable {
 	}
 	private void dessinerPoints(Graphics g, int x1, int y1, int x2, int y2,JPanel rectPanel) {
 	        //coin en haut à gauche
-		if(pointdessiner==false) {
-			
+		
+			g.setColor(Color.BLACK);
 			g.fillRect(x1-5, y1-5, 10, 10);
 			Rectangle rect1 = new Rectangle((x1-5),(y1-5),10,10);
 			addRectangle(rect1);
 	                
 	        
 	        g.fillRect((x1+x2)/2-5, y1-5, 10, 10);
-	        Rectangle rect2 = new Rectangle((x1+x2)/2,(y1-5),10,10);
+	        Rectangle rect2 = new Rectangle((x1+x2)/2-5,(y1-5),10,10);
 			addRectangle(rect2);
 			
 	        //coin en haut à droite
@@ -223,7 +228,7 @@ public class Shap implements Serializable {
 			addRectangle(rect4);
 	        //milieu en bas
 	        g.fillRect((x1+x2)/2-5, y2-5, 10, 10);
-	        Rectangle rect5 = new Rectangle((x1+x2)/2,(y2-5),10,10);
+	        Rectangle rect5 = new Rectangle((x1+x2)/2-5,(y2-5),10,10);
 			addRectangle(rect5);
 	        //coin en bas à droite
 	        g.fillRect(x2-5, y2-5, 10, 10);
@@ -231,24 +236,19 @@ public class Shap implements Serializable {
 			addRectangle(rect6);
 	        //milieu gauche
 	        g.fillRect(x1-5, (y1+y2)/2-5, 10, 10);
-	        Rectangle rect7 = new Rectangle((x1-5),(y1+y2)/2,10,10);
+	        Rectangle rect7 = new Rectangle((x1-5),(y1+y2)/2-5,10,10);
 			addRectangle(rect7);
 	        //milieu droit
 	        g.fillRect(x2-5, (y1+y2)/2-5, 10, 10);
-	        Rectangle rect8 = new Rectangle((x2-5),(y1+y2)/2,10,10);
+	        Rectangle rect8 = new Rectangle((x2-5),(y1+y2)/2-5,10,10);
 			addRectangle(rect8);
 	        pointdessiner=true;
-		}
+	        
 	        
 	    
 	}
 	
-private void removePoints(Graphics g, int x1, int y1, int x2, int y2,JPanel rectPanel,Rectangle rect1) {
-	if(pointdessiner) {
-		rectangles.remove(rect1);
-		
-	}
-}
+
 	public void selectdraw(Graphics g,boolean status,JPanel rectPanel){
 		
 		List<Integer> listex = new LinkedList<Integer>(); 
@@ -261,8 +261,8 @@ private void removePoints(Graphics g, int x1, int y1, int x2, int y2,JPanel rect
 			listey.add(rect.getY());
 			listey.add((rect.getY()+rect.getHeight()));
 		}
-			Graph.ajouterTexte("Le maximum est: "+ Collections.max(listex)+" et "+ Collections.max(listey));
-			Graph.ajouterTexte("Le minimum est: "+ Collections.min(listex)+" et "+ Collections.min(listey));
+			//Graph.ajouterTexte("Le maximum est: "+ Collections.max(listex)+" et "+ Collections.max(listey));
+			//Graph.ajouterTexte("Le minimum est: "+ Collections.min(listex)+" et "+ Collections.min(listey));
 			int x1=Collections.min(listex);
 			int y1=Collections.min(listey);
 			int x2=Collections.max(listex);
@@ -280,18 +280,11 @@ private void removePoints(Graphics g, int x1, int y1, int x2, int y2,JPanel rect
 			g.drawLine(x2,y2,x1,y2);
 
 			g.drawLine(x1,y2,x1,y1);
+			dessinerPoints(g, x1, y1, x2, y2,rectPanel);
 			
 			
 		
-		if(status){
-			
-			//System.out.println("dessiner");
-			dessinerPoints(g, x1, y1, x2, y2,rectPanel);
-        } else {
-            System.out.println("effacer");
-            g.setColor(Color.WHITE); 
-            g.fillRect(50, 50, 50, 50);
-        }
+		
 		
 	}
 }
