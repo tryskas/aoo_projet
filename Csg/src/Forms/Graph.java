@@ -22,7 +22,7 @@ public class Graph {
     private JFrame frame;
     private static JFrame info;	
     private JPanel rectPanel;
-    private boolean btnCreatingRectangle, btnUnion, btnInter, btnMove, btnResize, btnInfo ,hold= false;
+    private boolean btnCreatingRectangle, btnUnion, btnInter, btnMove, btnInfo ,hold= false;
     private int startX, startY, endX, endY = -1;
     private int nbrRectCreer,selection=0;
     private static int IndicePanel=0;
@@ -115,20 +115,7 @@ public class Graph {
         });
         toolBar.add(creatCercBtn);
         */
-// ---------------------------- btn resize ----------------------------
-     JButton resizeBtn = new JButton("resize");
 
-     resizeBtn.addActionListener(new ActionListener() {
-         @Override
-         public void actionPerformed(ActionEvent e) {
-             resetBool();
-             btnResize = true;
-             rectPanel.removeMouseListener(mouseListener);
-             rectPanel.addMouseListener(mouseListener);
-         }
-     });
-     toolBar.add(resizeBtn);
-// ---------------------------- btn resize ----------------------------
 // --------------------------------- btn Union ---------------------------------
         JButton unionBtn = new JButton("union");
 
@@ -454,14 +441,14 @@ public class Graph {
 	        				//System.out.println("test corner activé");
 	        				for (int i = shaps.size() - 1; i >= 0; i--) {
 	        						Shap shape = shaps.get(i);
-	        						//System.out.println("ITERATION NUMERO "+i);
-	        						//System.out.println("nbr rect créer = "+nbrRectCreer);
+	        						System.out.println("ITERATION NUMERO "+i);
+	        						System.out.println("nbr rect créer = "+nbrRectCreer);
 	        						boolean verification=shape.isTouch(e.getX(), e.getY());
 	        						int verificationcorner=shape.isTouchInfoCorner(e.getX(), e.getY(),nbrRectCreer,selection);
 	        						//System.out.println("verif = "+verification);
 	        						System.out.println("verifcorner = "+verificationcorner);
-	        						//System.out.println("oldshape : "+oldshape);
-	        						//System.out.println("selectedshape : "+selectedShape1);
+	        						System.out.println("oldshape : "+oldshape);
+	        						System.out.println("selectedshape : "+selectedShape1);
 	        						
 	        						if(oldshape==null) {
 	        							if(selectedShape1==null){
@@ -470,11 +457,11 @@ public class Graph {
 		        								oldshape= selectedShape1;
 		        								selectedShape1 = shape;
 		        								ajouterTexte(shape.toString());
-		        								
-		        								
 		        								Graphics g = rectPanel.getGraphics();
 		        								shape.selectdraw(g,true,rectPanel);
 		        								break;
+		        							}else {
+		        								
 		        							}
 	        							}else {
 	        								if(verificationcorner>0) {
@@ -482,66 +469,34 @@ public class Graph {
 		        							}else {
 		        								System.out.println("pas de corner = rien ");
 		        								if(verification==true){
-		        									selectedShape1.removeRectangle();
-		        									rectPanel.repaint();
-		        									oldshape=selectedShape1;
-		        									selectedShape1=shape;
-		        									
+		        									resetselectinfo();
 		        									break;
 		        								}else {
-		        									resetselectinfo();
+		        									selectedShape1=null;
+		        									System.out.println("JE SUIS ALA");
+		        									
 		        									break;
 		        								}
 		        							}
 	        							}
 	        						}else {
 	        							if(selectedShape1==oldshape){
-	        								if(verificationcorner>0) {
-		        								System.out.println("corner");
-		        							}else {
-		        								System.out.println("pas de corner = rien ");
-		        								if(verification==true){
-		        									oldshape=selectedShape1;
-		        									selectedShape1=shape;
-		        									break;
-		        								}else {
-		        									resetselectinfo();
-		        									break;
-		        								}
-		        							}
-	        							
-		        							
+	        								selectedShape1=null;
+	        								oldshape=null;
 	        							}else {
 	        								System.out.println("figure existe");
-	        								oldshape= selectedShape1;
+	        								oldshape= null;
 	        								selectedShape1 = shape;
 	        								ajouterTexte(shape.toString());
-	        								
-	        								
 	        								Graphics g = rectPanel.getGraphics();
 	        								shape.selectdraw(g,true,rectPanel);
 	        								break;
 	        							}
-	        						}
-	        						
-	        							
-
-
-	        						
-	        							
+	        						}	
 	        					}
 	        				}
-	        				
 	        			}
-	        			
-	        		
 	        	}
-	             
-	            	 
-	            	
-	             
-	         
-	         
 //--------------------------------- function info ----------------------------------
         }
     };
@@ -561,7 +516,6 @@ public class Graph {
     	this.btnInter = false;
     	this.btnUnion = false;
     	this.btnMove = false;
-    	this.btnResize = false;
     	
     	this.startX = -1;
     	this.startY = -1;
@@ -570,12 +524,7 @@ public class Graph {
     	
     	this.selectedShape2=null;
     	this.old=null;
-    	if(btnInfo=true) {
-    		if(selectedShape1!=null) {
-    			selectedShape1.removeRectangle();
-    			rectPanel.repaint();
-    		}
-    	}
+    	
     	this.btnInfo = false;
     	this.selectedShape1=null;
     }
