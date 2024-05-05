@@ -14,6 +14,7 @@ import java.io.Serializable;
 public class Shap implements Serializable {
 	private static int nextId = 1;
     private int id;
+    private boolean pointdessiner=false; 
 	private List<Rectangle> rectangles;
 	// private List<Cercle> cercles; FOR CERCLE
 	
@@ -39,7 +40,7 @@ public class Shap implements Serializable {
 			//System.out.println("remove de "+i);
 			rectangles.remove(rectangles.get(i));
 		}
-		
+		pointdessiner=false;
 		//System.out.println("fin de remove");
 	}
 	
@@ -66,13 +67,15 @@ public class Shap implements Serializable {
 	    return false;
 	}
 	
-	public int isTouchInfoCorner(int x,int y,boolean precis,int last) {
-		//System.out.println("info corner : "+rectangles.size());
+	public int isTouchInfoCorner(int x,int y,int nbrRectCreer,int last) {
+		List<Integer> listex = new LinkedList<Integer>(); 
+		List<Integer> listey = new LinkedList<Integer>(); 
+		System.out.println("info corner : "+rectangles.size()+" "+ nbrRectCreer);
 		int realsize=rectangles.size() -1;
-		//System.out.println("realsize :"+realsize);
+		System.out.println("realsize :"+realsize);
 		for (int i = rectangles.size()-1; i >= 0; i--) {
 			Rectangle rect = rectangles.get(i);
-			//System.out.println("max ="+realsize+"il parcour le "+i+" contenu "+rect.contains(x,y));
+			System.out.println("max ="+realsize+"il parcour le "+i+" contenu "+rect.contains(x,y));
 			if(rect.contains(x,y)) {
 				
 				if(i==realsize) {
@@ -101,11 +104,7 @@ public class Shap implements Serializable {
 				}
 			}
 		}
-		if(precis) {
-			return -1;
-		}else {
-			return last;
-		}
+		return last;
 	}
 	
 	public int getId() {
@@ -130,59 +129,58 @@ public class Shap implements Serializable {
 		
 		for (int i = size - 9; i >= 0; i--) {
 			Rectangle rect=rectangles.get(i);
-			//System.out.println("rectangle n°"+i);
-			//System.out.println(" valeurs : "+selection +" "+curseur_x+" "+curseur_y);
+			System.out.println("rectangle n°"+i);
+			System.out.println(" valeurs : "+selection +" "+curseur_x+" "+curseur_y);
 			
 			//selection=40;		
 			switch(selection) {
 			case 1:
+				rect.setWidth(rectangles.get(i).getWidth()-curseur_x);
+				rect.setHeight(rectangles.get(i).getHeight()-curseur_y);
 				
-				rect.setWidth(rectangles.get(i).getWidth()+(rectangles.get(i).getX()-curseur_x));
-				rect.setHeight(rectangles.get(i).getHeight()+(rectangles.get(i).getY()-curseur_y));
-				rect.setX(curseur_x);
-				rect.setY(curseur_y);
+				rect.setX(rectangles.get(i).getX()+curseur_x);
+				rect.setY(rectangles.get(i).getY()+curseur_y);
 				selection=1;
 				break;
 			case 2:
 				
-				rect.setHeight(rectangles.get(i).getHeight()+(rectangles.get(i).getY()-curseur_y));
-				rect.setY(curseur_y);
+				rect.setHeight(rectangles.get(i).getHeight()-curseur_y);
+				rect.setY(rectangles.get(i).getY()+curseur_y);
 				selection=2;
 				break;
 			case 3:
 				//rectangles.get(i).setX(curseur_x-rectangles.get(i).getWidth());
-				rect.setWidth(curseur_x-rectangles.get(i).getX());
-				rect.setHeight(rectangles.get(i).getHeight()+(rectangles.get(i).getY()-curseur_y));
-				rectangles.get(i).setY(curseur_y);
+				rect.setWidth(rectangles.get(i).getWidth()+curseur_x);
+				rect.setHeight(rectangles.get(i).getHeight()-curseur_y);
+				rect.setY(rectangles.get(i).getY()+curseur_y);
 				selection=3;
 				break;
 			case 4:
 				
 				//rectangles.get(i).setY(curseur_y-rectangles.get(i).getHeight());
-				rect.setWidth(rectangles.get(i).getWidth()+(rectangles.get(i).getX()-curseur_x));
-				rect.setHeight((curseur_y-rectangles.get(i).getY()));
-				rect.setX(curseur_x);
-				selection=1;
+				rect.setWidth(rectangles.get(i).getWidth()-curseur_x);
+				rect.setHeight(rectangles.get(i).getHeight()+curseur_y);
+				rect.setX(rectangles.get(i).getX()+curseur_x);
+				selection=4;
 				break;
 			case 5:
-				rect.setHeight((curseur_y-rectangles.get(i).getY()));
+				rect.setHeight(rectangles.get(i).getHeight()+curseur_y);
 				selection=5;
 				break;
 			case 6:
-				//rectangles.get(i).setX(curseur_x-rectangles.get(i).getWidth());
-				//rectangles.get(i).setY(curseur_y-rectangles.get(i).getHeight());
-				rect.setWidth(curseur_x-(rectangles.get(i).getX()));
-				rect.setHeight((curseur_y-rectangles.get(i).getY()));
+				rect.setWidth(rectangles.get(i).getWidth()+curseur_x);
+				rect.setHeight(rectangles.get(i).getHeight()+curseur_y);
 				selection=6;
 				break;
 			case 7:
 				
-				rect.setWidth(rectangles.get(i).getWidth()+(rectangles.get(i).getX()-curseur_x));
-				rect.setX(curseur_x);
+				rect.setWidth(rectangles.get(i).getWidth()-curseur_x);
+				rect.setX(rectangles.get(i).getX()+curseur_x);
+
 				selection=7;
 				break;
 			case 8:
-				rect.setWidth(curseur_x-rectangles.get(i).getX());
+				rect.setWidth(rectangles.get(i).getWidth()+curseur_x);
 				selection=8;
 				break;
 			}
@@ -201,7 +199,11 @@ public class Shap implements Serializable {
         }
         */
     }
-	
+	private boolean dessinerPoints = false;
+	public void setDessinerPoints(boolean dessiner) {
+
+	    this.dessinerPoints = dessiner;
+	}
 	private void dessinerPoints(Graphics g, int x1, int y1, int x2, int y2,JPanel rectPanel) {
 	        //coin en haut à gauche
 		
@@ -239,6 +241,7 @@ public class Shap implements Serializable {
 	        g.fillRect(x2-5, (y1+y2)/2-5, 10, 10);
 	        Rectangle rect8 = new Rectangle((x2-5),(y1+y2)/2-5,10,10);
 			addRectangle(rect8);
+	        pointdessiner=true;
 	        
 	        
 	    
