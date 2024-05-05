@@ -16,66 +16,42 @@ public class Shap implements Serializable {
     private int id;
     private boolean pointdessiner=false; 
 	private List<Rectangle> rectangles;
-	// private List<Cercle> cercles; FOR CERCLE
 	
 	public Shap() {
 		id = nextId;
 		nextId++;
 		rectangles = new ArrayList<Rectangle>();
-		// cercles = new ArrayList<Cercle>(); FOR CERCLE
 	}
 	public void addRectangle(Rectangle rectangle) {
 		
 		rectangles.add(rectangle);
 	}
-	/* FOR CERCLE
-	public void addCercle(Cercle cercle) {
-		cercles.add(cercle);
-	}
-	*/
 	public void removeRectangle() {
 		int size=rectangles.size();
 		for (int i = size - 1; i >= size-8; i--) {
-			//System.out.println("de "+rectangles.size()+"à"+(rectangles.size()-8));
-			//System.out.println("remove de "+i);
 			rectangles.remove(rectangles.get(i));
 		}
 		pointdessiner=false;
-		//System.out.println("fin de remove");
 	}
 	
 	public List<Rectangle> getRectangles() {
         return rectangles;
     }
-	/* FOR CERCLE
-	public List<Cercle> getCercles(){
-		return this.cercles;
-	}
-	*/
 	
 	public boolean isTouch(int x, int y) {
 		for (int i = rectangles.size() - 1; i >= 0; i--) {
 			Rectangle rectangle = rectangles.get(i);
 	        if (rectangle.contains(x, y)) return true;
 	    }
-		/* FOR CERCLE
-		for (int i = cercles.size() - 1; i >= 0; i--) {
-			Cercle cercle = cercles.get(i);
-	        if (cercle.contains(x, y)) return true;
-	    }
-	    */
 	    return false;
 	}
 	
 	public int isTouchInfoCorner(int x,int y,int nbrRectCreer,int last) {
 		List<Integer> listex = new LinkedList<Integer>(); 
 		List<Integer> listey = new LinkedList<Integer>(); 
-		System.out.println("info corner : "+rectangles.size()+" "+ nbrRectCreer);
 		int realsize=rectangles.size() -1;
-		System.out.println("realsize :"+realsize);
 		for (int i = rectangles.size()-1; i >= 0; i--) {
 			Rectangle rect = rectangles.get(i);
-			System.out.println("max ="+realsize+"il parcour le "+i+" contenu "+rect.contains(x,y));
 			if(rect.contains(x,y)) {
 				
 				if(i==realsize) {
@@ -116,12 +92,6 @@ public class Shap implements Serializable {
 	        rectangle.setX(rectangle.getX() + deltaX);
 	        rectangle.setY(rectangle.getY() + deltaY);
 	    }
-	    /* FOR CERCLE
-	    for (Cercle cercle : cercles) {
-	    	cercle.setX(cercle.getX() + deltaX);
-	        cercle.setY(cercle.getY() + deltaY);
-	    }
-	    */
 	}
 	public void setco(int selection,int curseur_x,int curseur_y) {
 		int size=rectangles.size();
@@ -129,10 +99,7 @@ public class Shap implements Serializable {
 		
 		for (int i = size - 9; i >= 0; i--) {
 			Rectangle rect=rectangles.get(i);
-			System.out.println("rectangle n°"+i);
-			System.out.println(" valeurs : "+selection +" "+curseur_x+" "+curseur_y);
 			
-			//selection=40;		
 			switch(selection) {
 			case 1:
 				rect.setWidth(rectangles.get(i).getWidth()-curseur_x);
@@ -149,7 +116,6 @@ public class Shap implements Serializable {
 				selection=2;
 				break;
 			case 3:
-				//rectangles.get(i).setX(curseur_x-rectangles.get(i).getWidth());
 				rect.setWidth(rectangles.get(i).getWidth()+curseur_x);
 				rect.setHeight(rectangles.get(i).getHeight()-curseur_y);
 				rect.setY(rectangles.get(i).getY()+curseur_y);
@@ -157,7 +123,6 @@ public class Shap implements Serializable {
 				break;
 			case 4:
 				
-				//rectangles.get(i).setY(curseur_y-rectangles.get(i).getHeight());
 				rect.setWidth(rectangles.get(i).getWidth()-curseur_x);
 				rect.setHeight(rectangles.get(i).getHeight()+curseur_y);
 				rect.setX(rectangles.get(i).getX()+curseur_x);
@@ -192,12 +157,6 @@ public class Shap implements Serializable {
             g.setColor(Color.GREEN);
             g.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
         }
-        /* FOR CERCLE
-        for (Cercle cercle : cercles){
-        	g.setColor(Color.red);
-        	g.fillOval(cercle.getX()-cercle.getR(), cercle.getY()-cercle.getR(), cercle.getR()*2, cercle.getR()*2);
-        }
-        */
     }
 	private boolean dessinerPoints = false;
 	public void setDessinerPoints(boolean dessiner) {
@@ -242,9 +201,6 @@ public class Shap implements Serializable {
 	        Rectangle rect8 = new Rectangle((x2-5),(y1+y2)/2-5,10,10);
 			addRectangle(rect8);
 	        pointdessiner=true;
-	        
-	        
-	    
 	}
 	
 
@@ -253,15 +209,11 @@ public class Shap implements Serializable {
 		List<Integer> listex = new LinkedList<Integer>(); 
 		List<Integer> listey = new LinkedList<Integer>(); 
 		for (Rectangle rect : rectangles) {
-			System.err.println("select draw :");
-			//System.err.println("X1 = " + rect.getX() + " Y1 = " + rect.getY() + " X2 = " + (rect.getX()+rect.getWidth()) + " Y2 = " + (rect.getY()+rect.getHeight()) );
 			listex.add(rect.getX());
 			listex.add((rect.getX()+rect.getWidth()));
 			listey.add(rect.getY());
 			listey.add((rect.getY()+rect.getHeight()));
 		}
-			//Graph.ajouterTexte("Le maximum est: "+ Collections.max(listex)+" et "+ Collections.max(listey));
-			//Graph.ajouterTexte("Le minimum est: "+ Collections.min(listex)+" et "+ Collections.min(listey));
 			int x1=Collections.min(listex);
 			int y1=Collections.min(listey);
 			int x2=Collections.max(listex);
@@ -280,10 +232,6 @@ public class Shap implements Serializable {
 
 			g.drawLine(x1,y2,x1,y1);
 			dessinerPoints(g, x1, y1, x2, y2,rectPanel);
-			
-			
-		
-		
 		
 	}
 }

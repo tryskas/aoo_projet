@@ -102,20 +102,6 @@ public class Graph {
         toolBar.add(creatRectBtn);
 // ---------------------------- btn create rectangle ----------------------------
 
-        /* FOR CERLCE
-        JButton creatCercBtn = new JButton("New Cercle");
-        creatCercBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	resetBool();
-                btnCreatingCercle = true;
-                rectPanel.removeMouseListener(mouseListener);
-                rectPanel.addMouseListener(mouseListener);
-            }
-        });
-        toolBar.add(creatCercBtn);
-        */
-
 // --------------------------------- btn Union ---------------------------------
         JButton unionBtn = new JButton("union");
 
@@ -230,12 +216,9 @@ public class Graph {
                 else if (btnInfo && selectedShape1 != null) {
        	        		 if (SwingUtilities.isLeftMouseButton(e)) {
        	        			 hold=true;
-       	                	//System.out.println("test corner activé");
 							   int deltaX = e.getX() - startX;
 							   int deltaY = e.getY() - startY;
 							   selection = selectedShape1.isTouchInfoCorner(e.getX(), e.getY(),nbrRectCreer,selection);
-							   System.out.println("selectino = " +selection);
-							   System.out.println("SS "+selectedShape1.getId()+" "+selectedShape1+"");
 							   selectedShape1.setco(selection,deltaX,deltaY);
 							   
 							   startX = e.getX();
@@ -278,7 +261,6 @@ public class Graph {
                          shaps.add(shap);
                              
                          rectPanel.repaint();
-                         System.err.println("Rectangle créé avec les coordonnées : (" + startX + ", " + startY + ") et (" + endX + ", " + endY + ")");
                          startX = -1;
                          startY = -1;
                          endX = -1;
@@ -307,7 +289,6 @@ public class Graph {
             @Override
             public void mousePressed(MouseEvent e) {
                 if (btnMove && SwingUtilities.isLeftMouseButton(e)) {
-                	System.err.println("Moving");
                     if (selectedShape1 == null) {
                         for (int i = shaps.size() - 1; i >= 0; i--) {
                             Shap shape = shaps.get(i);
@@ -318,7 +299,6 @@ public class Graph {
                                 startX = e.getX();
                                 startY = e.getY();
                                 
-                                System.err.println("Selected id= " + shape.getId());
                                 break;
                             }
                         }
@@ -342,39 +322,6 @@ public class Graph {
     MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mousePressed(MouseEvent e) {
-        	
-        	 
-            
-// ---------------------------- function create cercle ----------------------------
-            /* FOR CERLCE
-            if (btnCreatingCercle) {
-            	
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    if (startX == -1 && startY == -1) {
-                        startX = e.getX();
-                        startY = e.getY();
-                    } else {
-                        endX = e.getX();
-                        endY = e.getY();
-                        btnCreatingCercle = false;
-                        
-                        //ajoute un rectangle a la liste.
-                        Shap shap = new Shap();
-                        int rayon = (int) Math.sqrt(Math.pow(Math.abs(endX-startX), 2) + Math.pow(Math.abs(endY-startY), 2));
-                        shap.addCercle(new Cercle(startX, startY, rayon));
-                        shaps.add(shap);
-                        
-                        rectPanel.removeMouseListener(this);
-                        rectPanel.repaint();
-                        serializeShapes("shapes.ser");
-                        System.err.println("Cercle créé avec les coordonnées : (" + startX + ", " + startY + ") et de rayon :" + (int) Math.sqrt(Math.pow(Math.abs(endX-startX), 2) + Math.pow(Math.abs(endY-startY), 2)));
-                        startX=-1; startY=-1;
-                    }
-                }
-            } 
-            */      
-// ---------------------------- function create cercle ----------------------------
-            
 // --------------------------------- function Union ----------------------------------
             if (btnUnion) {
                 if (SwingUtilities.isLeftMouseButton(e)) {
@@ -391,7 +338,6 @@ public class Graph {
                        shaps.remove(selectedShape2);
                        shaps.add(unionResult);
                        
-                       System.err.println("New shap id= " + unionResult.getId());
                        selectedShape1 = null;
                        selectedShape2 = null;
                        rectPanel.repaint();
@@ -417,7 +363,6 @@ public class Graph {
                        shaps.remove(selectedShape2);
                        shaps.add(InterResult);
                        
-                       System.err.println("New shap id= " + InterResult.getId());
                        selectedShape1 = null;
                        selectedShape2 = null;
                        rectPanel.repaint();
@@ -432,22 +377,14 @@ public class Graph {
 	        		List<Object> maListe = new ArrayList<>();
 	        		if (btnInfo) {
 	        			if (SwingUtilities.isLeftMouseButton(e)) {
-	        				//System.out.println("test corner activé");
 	        				for (int i = shaps.size() - 1; i >= 0; i--) {
 	        						Shap shape = shaps.get(i);
-	        						System.out.println("ITERATION NUMERO "+i);
-	        						System.out.println("nbr rect créer = "+nbrRectCreer);
 	        						boolean verification=shape.isTouch(e.getX(), e.getY());
 	        						int verificationcorner=shape.isTouchInfoCorner(e.getX(), e.getY(),nbrRectCreer,selection);
-	        						//System.out.println("verif = "+verification);
-	        						System.out.println("verifcorner = "+verificationcorner);
-	        						System.out.println("oldshape : "+oldshape);
-	        						System.out.println("selectedshape : "+selectedShape1);
 	        						
 	        						if(oldshape==null) {
 	        							if(selectedShape1==null){
 	        								if(verification) {
-		        								System.out.println("figure existe");
 		        								oldshape= selectedShape1;
 		        								selectedShape1 = shape;
 		        								ajouterTexte(shape.toString());
@@ -458,17 +395,12 @@ public class Graph {
 		        								
 		        							}
 	        							}else {
-	        								if(verificationcorner>0) {
-		        								System.out.println("corner");
-		        							}else {
-		        								System.out.println("pas de corner = rien ");
+	        								if(verificationcorner<=0) {
 		        								if(verification==true){
 		        									resetselectinfo();
 		        									break;
 		        								}else {
 		        									selectedShape1=null;
-		        									System.out.println("JE SUIS ALA");
-		        									
 		        									break;
 		        								}
 		        							}
@@ -478,7 +410,6 @@ public class Graph {
 	        								selectedShape1=null;
 	        								oldshape=null;
 	        							}else {
-	        								System.out.println("figure existe");
 	        								oldshape= null;
 	        								selectedShape1 = shape;
 	        								ajouterTexte(shape.toString());
@@ -496,7 +427,6 @@ public class Graph {
     };
 // ================================= Click Mouse =====================================
     public void resetselectinfo() {
-		System.out.println("reset");
     	selectedShape1.removeRectangle();
 		rectPanel.repaint();
 		oldshape=selectedShape1;
@@ -506,7 +436,6 @@ public class Graph {
     }
     public void resetBool() {
     	this.btnCreatingRectangle = false;
-    	//this.btnCreatingCercle = false;
     	this.btnInter = false;
     	this.btnUnion = false;
     	this.btnMove = false;
@@ -524,11 +453,9 @@ public class Graph {
     }
     
     public void serializeShapes(String filename) {
-    	System.err.println("start save");
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
             oos.writeObject(shaps);
             oos.close();
-            System.err.println("save done !!!");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -541,18 +468,9 @@ public class Graph {
     	for (Rectangle rect : shape1.getRectangles()) {
             unionResult.addRectangle(rect);
         }
-    	/*for (Cercle cerc : shape1.getCercles()) { FOR CERLCE
-    		unionResult.addCercle(cerc);
-    	}
-		*/
         for (Rectangle rect : shape2.getRectangles()) {
             unionResult.addRectangle(rect);
         }
-        /*
-        for (Cercle cerc : shape2.getCercles()) { FOR CERLCE
-    		unionResult.addCercle(cerc);
-    	}
-    	*/
         return unionResult;
     }
     
@@ -577,7 +495,6 @@ public class Graph {
                 Shap shape = shaps.get(i);
                 if (shape.isTouch(Xpos, Ypos)) {
                     selectedShape1 = shape;
-                    System.err.println("Selected id= " + shape.getId());
                     break;
                 }
             }
@@ -589,7 +506,6 @@ public class Graph {
                  Shap shape = shaps.get(i);
                  if (shape.isTouch(Xpos, Ypos) && !shape.equals(selectedShape1)) {
                      selectedShape2 = shape;
-                     System.err.println("Selected id= " + shape.getId());
                      break;
                  }
              }
